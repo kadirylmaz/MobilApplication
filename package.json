@@ -43,6 +43,7 @@
     "react-native-vector-icons": "^10.2.0",
     "@expo/vector-icons": "^14.0.4",
     "react-hook-form": "^7.53.0",
+    "@hookform/resolvers": "^3.9.0",
     "date-fns": "^3.6.0",
     "react-native-calendars": "^1.1305.0",
     "zustand": "^4.5.5",
