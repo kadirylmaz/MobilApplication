@@ -8,6 +8,7 @@ import { Surface, Text } from 'react-native-paper';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { lessonSchema, type LessonSchemaValues } from '../../src/validation/lessonSchemas';
 import { useLessons } from '../../src/hooks/useLessons';
 import { useStudents } from '../../src/hooks/useStudents';
@@ -15,6 +16,13 @@ import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
 import { AppTextInput } from '../../src/components/ui/AppTextInput';
 import { AppButton } from '../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../src/components/ui/ErrorMessage';
+
+const PRIMARY = '#5B4FCF';
+const PRIMARY_LIGHT = '#EDE9FE';
+const TEXT_PRIMARY = '#1E1B4B';
+const TEXT_SECONDARY = '#6B7280';
+const BORDER = '#E5E7EB';
+const ERROR_COLOR = '#EF4444';
 
 export default function NewLessonScreen() {
   const { student_id } = useLocalSearchParams<{ student_id?: string }>();
@@ -63,35 +71,34 @@ export default function NewLessonScreen() {
   return (
     <>
       <Stack.Screen options={{ title: 'Yeni Ders' }} />
-      <ScreenWrapper scrollable>
+      <ScreenWrapper scrollable style={styles.screenBg}>
         <View style={styles.form}>
           {student_id && prefilledStudent ? (
-            <Surface style={styles.studentDisplay} elevation={1}>
-              <Text variant="labelMedium" style={styles.studentLabel}>
-                Öğrenci
-              </Text>
-              <Text variant="bodyLarge" style={styles.studentName}>
-                {prefilledStudent.full_name}
-              </Text>
-              {prefilledStudent.grade || prefilledStudent.subject ? (
-                <Text variant="bodySmall" style={styles.studentMeta}>
-                  {[prefilledStudent.grade, prefilledStudent.subject]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </Text>
-              ) : null}
-            </Surface>
+            <View style={styles.studentDisplay}>
+              <View style={styles.studentDisplayIcon}>
+                <MaterialCommunityIcons name="account" size={20} color={PRIMARY} />
+              </View>
+              <View style={styles.studentDisplayInfo}>
+                <Text style={styles.studentLabel}>Öğrenci</Text>
+                <Text style={styles.studentName}>{prefilledStudent.full_name}</Text>
+                {prefilledStudent.grade || prefilledStudent.subject ? (
+                  <Text style={styles.studentMeta}>
+                    {[prefilledStudent.grade, prefilledStudent.subject]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
           ) : (
             <Controller
               control={control}
               name="student_id"
               render={({ field: { onChange, onBlur, value } }) => (
                 <View>
-                  <Text variant="labelMedium" style={styles.pickerLabel}>
-                    Öğrenci *
-                  </Text>
+                  <Text style={styles.pickerLabel}>Öğrenci *</Text>
                   {students.length === 0 ? (
-                    <Text variant="bodyMedium" style={styles.noStudentsText}>
+                    <Text style={styles.noStudentsText}>
                       Önce öğrenci eklemelisiniz.
                     </Text>
                   ) : (
@@ -101,17 +108,15 @@ export default function NewLessonScreen() {
                       showsVerticalScrollIndicator={false}
                     >
                       {students.map((student) => (
-                        <Surface
+                        <View
                           key={student.id}
                           style={[
                             styles.studentOption,
                             value === student.id && styles.studentOptionSelected,
                           ]}
-                          elevation={1}
                           onTouchEnd={() => onChange(student.id)}
                         >
                           <Text
-                            variant="bodyMedium"
                             style={[
                               styles.studentOptionText,
                               value === student.id && styles.studentOptionTextSelected,
@@ -120,13 +125,13 @@ export default function NewLessonScreen() {
                             {student.full_name}
                           </Text>
                           {student.grade || student.subject ? (
-                            <Text variant="bodySmall" style={styles.studentOptionMeta}>
+                            <Text style={styles.studentOptionMeta}>
                               {[student.grade, student.subject]
                                 .filter(Boolean)
                                 .join(' · ')}
                             </Text>
                           ) : null}
-                        </Surface>
+                        </View>
                       ))}
                     </ScrollView>
                   )}
@@ -137,6 +142,8 @@ export default function NewLessonScreen() {
               )}
             />
           )}
+
+          <Text style={styles.sectionLabel}>Ders Zamanı</Text>
 
           <Controller
             control={control}
@@ -185,6 +192,8 @@ export default function NewLessonScreen() {
             )}
           />
 
+          <Text style={styles.sectionLabel}>Ders Detayları</Text>
+
           <Controller
             control={control}
             name="topic"
@@ -230,70 +239,113 @@ export default function NewLessonScreen() {
 }
 
 const styles = StyleSheet.create({
+  screenBg: {
+    backgroundColor: '#F8F7FF',
+  },
   form: {
     gap: 4,
   },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: PRIMARY,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginTop: 8,
+    marginBottom: 4,
+    marginLeft: 2,
+  },
   studentDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
     padding: 16,
-    borderRadius: 8,
-    backgroundColor: '#F3EDF7',
+    borderRadius: 12,
+    backgroundColor: PRIMARY_LIGHT,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(91,79,207,0.2)',
+  },
+  studentDisplayIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  studentDisplayInfo: {
+    flex: 1,
   },
   studentLabel: {
-    color: '#6750A4',
-    marginBottom: 4,
+    fontSize: 11,
+    fontWeight: '700',
+    color: PRIMARY,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    marginBottom: 2,
   },
   studentName: {
-    fontWeight: '600',
-    color: '#1a1a1a',
+    fontSize: 16,
+    fontWeight: '700',
+    color: TEXT_PRIMARY,
   },
   studentMeta: {
-    color: '#616161',
+    fontSize: 12,
+    color: TEXT_SECONDARY,
     marginTop: 2,
   },
   pickerLabel: {
-    color: '#6750A4',
-    marginBottom: 8,
+    fontSize: 11,
+    fontWeight: '700',
+    color: PRIMARY,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    marginBottom: 8,
+    marginLeft: 2,
   },
   studentPickerScroll: {
     maxHeight: 200,
   },
   studentOption: {
-    padding: 12,
-    borderRadius: 8,
+    padding: 14,
+    borderRadius: 10,
     marginBottom: 6,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: BORDER,
   },
   studentOptionSelected: {
-    backgroundColor: '#EDE7F6',
+    backgroundColor: PRIMARY_LIGHT,
     borderWidth: 1.5,
-    borderColor: '#6750A4',
+    borderColor: PRIMARY,
   },
   studentOptionText: {
-    color: '#424242',
+    fontSize: 14,
+    color: TEXT_PRIMARY,
+    fontWeight: '500',
   },
   studentOptionTextSelected: {
-    color: '#6750A4',
-    fontWeight: '600',
+    color: PRIMARY,
+    fontWeight: '700',
   },
   studentOptionMeta: {
-    color: '#9E9E9E',
+    fontSize: 12,
+    color: TEXT_SECONDARY,
     marginTop: 2,
   },
   noStudentsText: {
-    color: '#B00020',
+    color: ERROR_COLOR,
+    fontSize: 14,
     marginBottom: 8,
   },
   fieldError: {
-    color: '#B00020',
+    color: ERROR_COLOR,
     fontSize: 12,
     marginTop: 4,
   },
   submitButton: {
-    marginTop: 8,
+    marginTop: 12,
   },
 });

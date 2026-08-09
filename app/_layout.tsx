@@ -6,7 +6,7 @@ import React, { useEffect, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { MD3LightTheme, PaperProvider } from 'react-native-paper';
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useAuthStore } from '../src/store/authStore';
 import { LoadingOverlay } from '../src/components/ui/LoadingOverlay';
 
@@ -14,14 +14,14 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: '#6750A4',
+    primary: '#5B4FCF',
     onPrimary: '#FFFFFF',
-    primaryContainer: '#EADDFF',
-    onPrimaryContainer: '#21005D',
-    secondary: '#625B71',
+    primaryContainer: '#EDE9FE',
+    onPrimaryContainer: '#1E1B4B',
+    secondary: '#7C6FE0',
     onSecondary: '#FFFFFF',
-    secondaryContainer: '#E8DEF8',
-    onSecondaryContainer: '#1D192B',
+    secondaryContainer: '#EDE9FE',
+    onSecondaryContainer: '#1E1B4B',
   },
 };
 
@@ -43,7 +43,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <PaperProvider theme={theme}>
-        <Slot />
+        <Stack screenOptions={{ headerShown: false }} />
         <LoadingOverlay visible={showLoading} />
       </PaperProvider>
     </GestureHandlerRootView>

@@ -8,12 +8,18 @@ import { Text } from 'react-native-paper';
 import { Link, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { loginSchema, type LoginFormValues } from '../../src/validation/authSchemas';
 import { useAuth } from '../../src/hooks/useAuth';
 import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
 import { AppTextInput } from '../../src/components/ui/AppTextInput';
 import { AppButton } from '../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../src/components/ui/ErrorMessage';
+
+const PRIMARY = '#5B4FCF';
+const PRIMARY_LIGHT = '#EDE9FE';
+const TEXT_PRIMARY = '#1E1B4B';
+const TEXT_SECONDARY = '#6B7280';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -42,18 +48,19 @@ export default function LoginScreen() {
   }
 
   return (
-    <ScreenWrapper scrollable>
+    <ScreenWrapper scrollable style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text variant="headlineMedium" style={styles.title}>
-            Ders Defteri
-          </Text>
-          <Text variant="bodyLarge" style={styles.subtitle}>
-            Hesabınıza giriş yapın
-          </Text>
+        {/* Hero header area */}
+        <View style={styles.heroArea}>
+          <View style={styles.iconCircle}>
+            <MaterialCommunityIcons name="notebook" size={64} color={PRIMARY} />
+          </View>
+          <Text style={styles.appTitle}>Ders Defteri</Text>
+          <Text style={styles.subtitle}>Hesabınıza giriş yapın</Text>
         </View>
 
-        <View style={styles.form}>
+        {/* Form card */}
+        <View style={styles.card}>
           <Controller
             control={control}
             name="email"
@@ -113,25 +120,63 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    backgroundColor: '#F8F7FF',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     paddingVertical: 24,
   },
-  header: {
-    marginBottom: 40,
+  heroArea: {
     alignItems: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 24,
+    backgroundColor: '#EDE9FE',
+    marginHorizontal: -16,
+    marginTop: -16,
+    marginBottom: 0,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    paddingBottom: 48,
   },
-  title: {
-    fontWeight: '700',
-    color: '#6750A4',
-    marginBottom: 8,
+  iconCircle: {
+    width: 104,
+    height: 104,
+    borderRadius: 52,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    shadowColor: '#5B4FCF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  appTitle: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: PRIMARY,
+    marginBottom: 6,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    color: '#616161',
+    fontSize: 15,
+    color: TEXT_SECONDARY,
+    fontWeight: '500',
   },
-  form: {
-    gap: 4,
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 24,
+    marginHorizontal: 0,
+    marginTop: -24,
+    shadowColor: '#5B4FCF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   button: {
     marginTop: 8,
@@ -140,14 +185,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 24,
+    marginTop: 28,
     flexWrap: 'wrap',
   },
   footerText: {
-    color: '#616161',
+    color: TEXT_SECONDARY,
   },
   link: {
-    color: '#6750A4',
-    fontWeight: '600',
+    color: PRIMARY,
+    fontWeight: '700',
   },
 });

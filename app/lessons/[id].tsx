@@ -8,11 +8,21 @@ import { Button, Card, Chip, Divider, Surface, Text } from 'react-native-paper';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { format, parseISO } from 'date-fns';
 import { tr } from 'date-fns/locale/tr';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLessons } from '../../src/hooks/useLessons';
 import { useStudentStore } from '../../src/store/studentStore';
 import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
 import { LoadingOverlay } from '../../src/components/ui/LoadingOverlay';
 import type { LessonStatus } from '../../src/types/database';
+
+const PRIMARY = '#5B4FCF';
+const PRIMARY_LIGHT = '#EDE9FE';
+const SUCCESS = '#10B981';
+const WARNING = '#F59E0B';
+const ERROR_COLOR = '#EF4444';
+const TEXT_PRIMARY = '#1E1B4B';
+const TEXT_SECONDARY = '#6B7280';
+const BORDER = '#E5E7EB';
 
 const STATUS_LABELS: Record<LessonStatus, string> = {
   scheduled: 'Planlandı',
@@ -22,10 +32,10 @@ const STATUS_LABELS: Record<LessonStatus, string> = {
 };
 
 const STATUS_COLORS: Record<LessonStatus, string> = {
-  scheduled: '#1565C0',
-  completed: '#2E7D32',
-  cancelled: '#B71C1C',
-  compensated: '#E65100',
+  scheduled: PRIMARY,
+  completed: SUCCESS,
+  cancelled: ERROR_COLOR,
+  compensated: WARNING,
 };
 
 export default function LessonDetailScreen() {
@@ -82,103 +92,101 @@ export default function LessonDetailScreen() {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Ders Detayı' }} />
-      <ScreenWrapper scrollable>
-        <Card style={styles.card} mode="elevated">
-          <Card.Content>
-            <View style={styles.headerRow}>
-              <Text variant="titleLarge" style={styles.cardTitle}>
-                Ders Bilgileri
-              </Text>
-              <Chip
-                style={[styles.statusChip, { backgroundColor: statusColor + '1A' }]}
-                textStyle={[styles.statusChipText, { color: statusColor }]}
-                compact
-              >
-                {statusLabel}
-              </Chip>
+      <ScreenWrapper scrollable style={styles.screenBg}>
+        {/* Status banner */}
+        <View style={[styles.statusBanner, { backgroundColor: statusColor + '15' }]}>
+          <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
+          <Text style={[styles.statusBannerText, { color: statusColor }]}>{statusLabel}</Text>
+        </View>
+
+        {/* Main info card */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Ders Bilgileri</Text>
+
+          <Divider style={styles.divider} />
+
+          {/* Student row */}
+          <View style={styles.infoRow}>
+            <View style={styles.infoIconBox}>
+              <MaterialCommunityIcons name="account" size={16} color={PRIMARY} />
             </View>
-
-            <Divider style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <Text variant="labelMedium" style={styles.label}>
-                Öğrenci
-              </Text>
-              <Text variant="bodyLarge" style={styles.value}>
-                {student?.full_name ?? 'Bilinmiyor'}
-              </Text>
-            </View>
-
-            {student?.grade || student?.subject ? (
-              <View style={styles.infoRow}>
-                <Text variant="labelMedium" style={styles.label}>
-                  Sınıf / Ders
-                </Text>
-                <Text variant="bodyMedium" style={styles.value}>
+            <View style={styles.infoContent}>
+              <Text style={styles.label}>Öğrenci</Text>
+              <Text style={styles.value}>{student?.full_name ?? 'Bilinmiyor'}</Text>
+              {student?.grade || student?.subject ? (
+                <Text style={styles.valueSub}>
                   {[student.grade, student.subject].filter(Boolean).join(' · ')}
                 </Text>
+              ) : null}
+            </View>
+          </View>
+
+          <Divider style={styles.divider} />
+
+          {/* Date/Time row */}
+          <View style={styles.dateTimeRow}>
+            <View style={[styles.infoRow, styles.flex1]}>
+              <View style={styles.infoIconBox}>
+                <MaterialCommunityIcons name="calendar" size={16} color={PRIMARY} />
               </View>
-            ) : null}
-
-            <Divider style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <Text variant="labelMedium" style={styles.label}>
-                Tarih
-              </Text>
-              <Text variant="bodyLarge" style={styles.value}>
-                {formattedDate}
-              </Text>
+              <View style={styles.infoContent}>
+                <Text style={styles.label}>Tarih</Text>
+                <Text style={styles.value}>{formattedDate}</Text>
+              </View>
             </View>
-
-            <View style={styles.infoRow}>
-              <Text variant="labelMedium" style={styles.label}>
-                Saat
-              </Text>
-              <Text variant="bodyLarge" style={styles.value}>
-                {formattedTime}
-              </Text>
+            <View style={[styles.infoRow, styles.flex1]}>
+              <View style={styles.infoIconBox}>
+                <MaterialCommunityIcons name="clock-outline" size={16} color={PRIMARY} />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.label}>Saat</Text>
+                <Text style={styles.value}>{formattedTime}</Text>
+              </View>
             </View>
+          </View>
 
-            <View style={styles.infoRow}>
-              <Text variant="labelMedium" style={styles.label}>
-                Süre
-              </Text>
-              <Text variant="bodyMedium" style={styles.value}>
-                {lesson.duration_minutes} dakika
-              </Text>
+          <View style={styles.infoRow}>
+            <View style={styles.infoIconBox}>
+              <MaterialCommunityIcons name="timer-outline" size={16} color={PRIMARY} />
             </View>
+            <View style={styles.infoContent}>
+              <Text style={styles.label}>Süre</Text>
+              <Text style={styles.value}>{lesson.duration_minutes} dakika</Text>
+            </View>
+          </View>
 
-            {lesson.topic ? (
-              <>
-                <Divider style={styles.divider} />
-                <View style={styles.infoRow}>
-                  <Text variant="labelMedium" style={styles.label}>
-                    Konu
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.value}>
-                    {lesson.topic}
-                  </Text>
+          {lesson.topic ? (
+            <>
+              <Divider style={styles.divider} />
+              <View style={styles.infoRow}>
+                <View style={styles.infoIconBox}>
+                  <MaterialCommunityIcons name="book-open-variant" size={16} color={PRIMARY} />
                 </View>
-              </>
-            ) : null}
-
-            {lesson.notes ? (
-              <>
-                <Divider style={styles.divider} />
-                <View style={styles.infoBlock}>
-                  <Text variant="labelMedium" style={styles.label}>
-                    Notlar
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.notesText}>
-                    {lesson.notes}
-                  </Text>
+                <View style={styles.infoContent}>
+                  <Text style={styles.label}>Konu</Text>
+                  <Text style={styles.value}>{lesson.topic}</Text>
                 </View>
-              </>
-            ) : null}
-          </Card.Content>
-        </Card>
+              </View>
+            </>
+          ) : null}
 
+          {lesson.notes ? (
+            <>
+              <Divider style={styles.divider} />
+              <View style={styles.notesBlock}>
+                <View style={styles.infoIconBox}>
+                  <MaterialCommunityIcons name="note-text-outline" size={16} color={PRIMARY} />
+                </View>
+                <View style={styles.infoContent}>
+                  <Text style={styles.label}>Notlar</Text>
+                  <Text style={styles.notesText}>{lesson.notes}</Text>
+                </View>
+              </View>
+            </>
+          ) : null}
+        </View>
+
+        {/* Action buttons */}
         <View style={styles.actions}>
           {lesson.status !== 'completed' && lesson.status !== 'cancelled' ? (
             <Button
@@ -187,6 +195,7 @@ export default function LessonDetailScreen() {
               loading={isLoading}
               disabled={isLoading}
               style={styles.completedButton}
+              contentStyle={styles.buttonContent}
               icon="check-circle"
             >
               Tamamlandı
@@ -200,7 +209,8 @@ export default function LessonDetailScreen() {
               loading={isLoading}
               disabled={isLoading}
               style={styles.cancelledButton}
-              textColor="#B71C1C"
+              contentStyle={styles.buttonContent}
+              textColor={ERROR_COLOR}
               icon="close-circle"
             >
               İptal Et
@@ -213,7 +223,8 @@ export default function LessonDetailScreen() {
             loading={isLoading}
             disabled={isLoading}
             style={styles.deleteButton}
-            textColor="#B00020"
+            contentStyle={styles.buttonContent}
+            textColor={ERROR_COLOR}
             icon="delete"
           >
             Dersi Sil
@@ -229,71 +240,125 @@ export default function LessonDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F8F7FF',
   },
-  card: {
-    margin: 16,
-    backgroundColor: '#ffffff',
+  screenBg: {
+    backgroundColor: '#F8F7FF',
   },
-  headerRow: {
+  statusBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     gap: 8,
-    marginBottom: 4,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 12,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  statusBannerText: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#5B4FCF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: BORDER,
   },
   cardTitle: {
-    fontWeight: '600',
-    color: '#1a1a1a',
-  },
-  statusChip: {
-    alignSelf: 'center',
-  },
-  statusChipText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
+    color: TEXT_PRIMARY,
+    marginBottom: 4,
   },
   divider: {
     marginVertical: 12,
+    backgroundColor: BORDER,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-    gap: 16,
+    gap: 12,
+    marginBottom: 4,
   },
-  infoBlock: {
-    gap: 6,
+  dateTimeRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 4,
+  },
+  flex1: {
+    flex: 1,
+  },
+  infoIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: PRIMARY_LIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+    marginTop: 2,
+  },
+  infoContent: {
+    flex: 1,
   },
   label: {
-    color: '#9E9E9E',
+    fontSize: 11,
+    fontWeight: '700',
+    color: TEXT_SECONDARY,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    minWidth: 80,
+    marginBottom: 2,
   },
   value: {
-    color: '#1a1a1a',
-    flex: 1,
-    textAlign: 'right',
+    fontSize: 15,
+    fontWeight: '600',
+    color: TEXT_PRIMARY,
+  },
+  valueSub: {
+    fontSize: 12,
+    color: TEXT_SECONDARY,
+    marginTop: 1,
+  },
+  notesBlock: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'flex-start',
   },
   notesText: {
-    color: '#424242',
+    fontSize: 14,
+    color: TEXT_SECONDARY,
     lineHeight: 22,
   },
   actions: {
-    paddingHorizontal: 16,
+    gap: 10,
     paddingBottom: 32,
-    gap: 8,
+  },
+  buttonContent: {
+    paddingVertical: 4,
   },
   completedButton: {
-    backgroundColor: '#2E7D32',
+    backgroundColor: SUCCESS,
+    borderRadius: 12,
   },
   cancelledButton: {
-    borderColor: '#B71C1C',
+    borderColor: ERROR_COLOR,
+    borderRadius: 12,
   },
   deleteButton: {
-    borderColor: '#B00020',
-    marginTop: 8,
+    borderColor: ERROR_COLOR,
+    borderRadius: 12,
+    marginTop: 4,
   },
 });

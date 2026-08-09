@@ -36,7 +36,6 @@ pnpm-lock.yaml
 .expo/
 dist/
 web-build/
-expo-env.d.ts
 
 # EAS (Expo Application Services)
 .easignore

@@ -3,9 +3,17 @@
 // =============================================================================
 
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Card, Chip, Text } from 'react-native-paper';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import type { LessonRow, LessonStatus } from '../../types/database';
+
+const PRIMARY = '#5B4FCF';
+const SUCCESS = '#10B981';
+const WARNING = '#F59E0B';
+const ERROR_COLOR = '#EF4444';
+const TEXT_PRIMARY = '#1E1B4B';
+const TEXT_SECONDARY = '#6B7280';
+const BORDER = '#E5E7EB';
 
 interface LessonCardProps {
   lesson: LessonRow;
@@ -20,10 +28,10 @@ const STATUS_LABELS: Record<LessonStatus, string> = {
 };
 
 const STATUS_COLORS: Record<LessonStatus, string> = {
-  scheduled: '#1565C0',
-  completed: '#2E7D32',
-  cancelled: '#B71C1C',
-  compensated: '#E65100',
+  scheduled: PRIMARY,
+  completed: SUCCESS,
+  cancelled: ERROR_COLOR,
+  compensated: WARNING,
 };
 
 function formatScheduledAt(isoString: string): string {
@@ -46,79 +54,108 @@ export function LessonCard({ lesson, onPress }: LessonCardProps) {
   const statusLabel = STATUS_LABELS[lesson.status];
 
   return (
-    <Card style={styles.card} onPress={onPress} mode="elevated">
-      <Card.Content style={styles.content}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      {/* Colored left accent bar */}
+      <View style={[styles.accentBar, { backgroundColor: statusColor }]} />
+
+      {/* Content */}
+      <View style={styles.content}>
         <View style={styles.row}>
           <View style={styles.info}>
-            <Text variant="bodyMedium" style={styles.date}>
+            <Text style={styles.date}>
               {formatScheduledAt(lesson.scheduled_at)}
             </Text>
             {lesson.topic ? (
-              <Text variant="titleSmall" style={styles.topic} numberOfLines={2}>
+              <Text style={styles.topic} numberOfLines={2}>
                 {lesson.topic}
               </Text>
             ) : (
-              <Text variant="titleSmall" style={styles.noTopic}>
-                Konu belirtilmemiş
-              </Text>
+              <Text style={styles.noTopic}>Konu belirtilmemiş</Text>
             )}
-            <Text variant="bodySmall" style={styles.duration}>
-              {lesson.duration_minutes} dakika
+            <Text style={styles.duration}>{lesson.duration_minutes} dakika</Text>
+          </View>
+
+          {/* Status badge */}
+          <View style={[styles.statusBadge, { backgroundColor: statusColor + '18' }]}>
+            <Text style={[styles.statusText, { color: statusColor }]}>
+              {statusLabel}
             </Text>
           </View>
-          <Chip
-            style={[styles.chip, { backgroundColor: statusColor + '1A' }]}
-            textStyle={[styles.chipText, { color: statusColor }]}
-            compact
-          >
-            {statusLabel}
-          </Chip>
         </View>
-      </Card.Content>
-    </Card>
+      </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
+    flexDirection: 'row',
     marginHorizontal: 16,
-    marginVertical: 6,
+    marginVertical: 5,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: BORDER,
+    overflow: 'hidden',
+    shadowColor: '#5B4FCF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  accentBar: {
+    width: 4,
+    borderTopLeftRadius: 14,
+    borderBottomLeftRadius: 14,
   },
   content: {
-    paddingVertical: 12,
+    flex: 1,
+    paddingVertical: 13,
+    paddingHorizontal: 14,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 8,
+    gap: 10,
   },
   info: {
     flex: 1,
-    gap: 3,
+    gap: 4,
   },
   date: {
-    color: '#616161',
-    fontSize: 12,
+    fontSize: 11,
+    color: TEXT_SECONDARY,
+    fontWeight: '500',
   },
   topic: {
-    fontWeight: '600',
-    color: '#1a1a1a',
+    fontSize: 14,
+    fontWeight: '700',
+    color: TEXT_PRIMARY,
   },
   noTopic: {
-    color: '#9E9E9E',
+    fontSize: 14,
+    color: '#9CA3AF',
     fontStyle: 'italic',
   },
   duration: {
-    color: '#757575',
-    marginTop: 2,
+    fontSize: 12,
+    color: TEXT_SECONDARY,
+    fontWeight: '500',
   },
-  chip: {
+  statusBadge: {
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     alignSelf: 'flex-start',
-    borderRadius: 12,
+    flexShrink: 0,
   },
-  chipText: {
+  statusText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

@@ -6,6 +6,11 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
 
+const PRIMARY = '#5B4FCF';
+const PRIMARY_LIGHT = '#EDE9FE';
+const TEXT_PRIMARY = '#1E1B4B';
+const TEXT_SECONDARY = '#6B7280';
+
 interface EmptyStateProps {
   icon: string;
   title: string;
@@ -15,14 +20,14 @@ interface EmptyStateProps {
 export function EmptyState({ icon, title, subtitle }: EmptyStateProps) {
   return (
     <View style={styles.container}>
-      <Icon source={icon} size={64} color="#9E9E9E" />
-      <Text variant="titleMedium" style={styles.title}>
-        {title}
-      </Text>
+      <View style={styles.iconWrapper}>
+        <View style={styles.iconCircle}>
+          <Icon source={icon} size={48} color={PRIMARY} />
+        </View>
+      </View>
+      <Text style={styles.title}>{title}</Text>
       {subtitle ? (
-        <Text variant="bodyMedium" style={styles.subtitle}>
-          {subtitle}
-        </Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
       ) : null}
     </View>
   );
@@ -36,13 +41,27 @@ const styles = StyleSheet.create({
     padding: 32,
     gap: 12,
   },
+  iconWrapper: {
+    marginBottom: 4,
+  },
+  iconCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: PRIMARY_LIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   title: {
+    fontSize: 17,
+    fontWeight: '700',
     textAlign: 'center',
-    color: '#424242',
-    fontWeight: '600',
+    color: TEXT_PRIMARY,
   },
   subtitle: {
+    fontSize: 14,
     textAlign: 'center',
-    color: '#757575',
+    color: TEXT_SECONDARY,
+    lineHeight: 21,
   },
 });

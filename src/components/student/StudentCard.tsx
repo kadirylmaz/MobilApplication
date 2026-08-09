@@ -3,96 +3,158 @@
 // =============================================================================
 
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Badge, Card, Text } from 'react-native-paper';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import type { StudentRow } from '../../types/database';
+
+const PRIMARY = '#5B4FCF';
+const PRIMARY_LIGHT = '#EDE9FE';
+const SUCCESS = '#10B981';
+const TEXT_PRIMARY = '#1E1B4B';
+const TEXT_SECONDARY = '#6B7280';
+const BORDER = '#E5E7EB';
 
 interface StudentCardProps {
   student: StudentRow;
   onPress: () => void;
 }
 
-export function StudentCard({ student, onPress }: StudentCardProps) {
-  return (
-    <Card style={styles.card} onPress={onPress} mode="elevated">
-      <Card.Content style={styles.content}>
-        <View style={styles.header}>
-          <Text variant="titleMedium" style={styles.name} numberOfLines={1}>
-            {student.full_name}
-          </Text>
-          <Badge
-            style={[
-              styles.badge,
-              student.is_active ? styles.badgeActive : styles.badgeInactive,
-            ]}
-          >
-            {student.is_active ? 'Aktif' : 'Pasif'}
-          </Badge>
-        </View>
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('');
+}
 
+export function StudentCard({ student, onPress }: StudentCardProps) {
+  const initials = getInitials(student.full_name);
+
+  return (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      {/* Left avatar */}
+      <View style={styles.avatar}>
+        <Text style={styles.avatarText}>{initials}</Text>
+      </View>
+
+      {/* Center info */}
+      <View style={styles.info}>
+        <Text style={styles.name} numberOfLines={1}>
+          {student.full_name}
+        </Text>
         {student.grade || student.subject ? (
           <View style={styles.meta}>
             {student.grade ? (
-              <Text variant="bodySmall" style={styles.metaText}>
-                {student.grade}
-              </Text>
+              <Text style={styles.metaText}>{student.grade}</Text>
             ) : null}
             {student.grade && student.subject ? (
-              <Text variant="bodySmall" style={styles.separator}>
-                {'·'}
-              </Text>
+              <Text style={styles.separator}>·</Text>
             ) : null}
             {student.subject ? (
-              <Text variant="bodySmall" style={styles.metaText}>
-                {student.subject}
-              </Text>
+              <Text style={styles.metaText}>{student.subject}</Text>
             ) : null}
           </View>
         ) : null}
-      </Card.Content>
-    </Card>
+      </View>
+
+      {/* Right badge */}
+      <View style={[
+        styles.badge,
+        student.is_active ? styles.badgeActive : styles.badgeInactive,
+      ]}>
+        <Text style={[
+          styles.badgeText,
+          student.is_active ? styles.badgeTextActive : styles.badgeTextInactive,
+        ]}>
+          {student.is_active ? 'Aktif' : 'Pasif'}
+        </Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 16,
-    marginVertical: 6,
-  },
-  content: {
-    paddingVertical: 12,
-  },
-  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
+    gap: 12,
+    marginHorizontal: 16,
+    marginVertical: 5,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: BORDER,
+    minHeight: 72,
+    shadowColor: '#5B4FCF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: PRIMARY,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  avatarText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  info: {
+    flex: 1,
+    gap: 3,
   },
   name: {
-    flex: 1,
-    fontWeight: '600',
-    color: '#1a1a1a',
-  },
-  badge: {
-    alignSelf: 'center',
-    fontSize: 11,
-  },
-  badgeActive: {
-    backgroundColor: '#2E7D32',
-  },
-  badgeInactive: {
-    backgroundColor: '#757575',
+    fontSize: 15,
+    fontWeight: '700',
+    color: TEXT_PRIMARY,
   },
   meta: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
     gap: 4,
   },
   metaText: {
-    color: '#616161',
+    fontSize: 12,
+    color: TEXT_SECONDARY,
+    fontWeight: '500',
   },
   separator: {
-    color: '#BDBDBD',
+    fontSize: 12,
+    color: '#D1D5DB',
+  },
+  badge: {
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    flexShrink: 0,
+  },
+  badgeActive: {
+    backgroundColor: '#D1FAE5',
+  },
+  badgeInactive: {
+    backgroundColor: '#F3F4F6',
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  badgeTextActive: {
+    color: SUCCESS,
+  },
+  badgeTextInactive: {
+    color: TEXT_SECONDARY,
   },
 });

@@ -36,6 +36,7 @@ export function AppTextInput({
         mode="outlined"
         error={!!error}
         style={styles.input}
+        outlineStyle={styles.outline}
         {...rest}
       />
       {error ? (
@@ -52,9 +53,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
+    fontSize: 15,
+  },
+  outline: {
+    borderRadius: 12,
+    borderColor: '#E5E7EB',
   },
   helper: {
     marginTop: -4,
+    fontSize: 12,
   },
 });

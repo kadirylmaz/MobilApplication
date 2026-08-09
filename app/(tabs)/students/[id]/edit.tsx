@@ -15,6 +15,11 @@ import { AppTextInput } from '../../../../src/components/ui/AppTextInput';
 import { AppButton } from '../../../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../../../src/components/ui/ErrorMessage';
 
+const PRIMARY = '#5B4FCF';
+const TEXT_PRIMARY = '#1E1B4B';
+const TEXT_SECONDARY = '#6B7280';
+const BORDER = '#E5E7EB';
+
 export default function EditStudentScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -90,8 +95,10 @@ export default function EditStudentScreen() {
           ),
         }}
       />
-      <ScreenWrapper scrollable>
+      <ScreenWrapper scrollable style={styles.screenBg}>
         <View style={styles.form}>
+          <Text style={styles.sectionLabel}>Öğrenci Bilgileri</Text>
+
           <Controller
             control={control}
             name="full_name"
@@ -122,6 +129,7 @@ export default function EditStudentScreen() {
           />
 
           <Divider style={styles.divider} />
+          <Text style={styles.sectionLabel}>Veli Bilgileri</Text>
 
           <Controller
             control={control}
@@ -153,6 +161,7 @@ export default function EditStudentScreen() {
           />
 
           <Divider style={styles.divider} />
+          <Text style={styles.sectionLabel}>Ders Bilgileri</Text>
 
           <Controller
             control={control}
@@ -203,13 +212,14 @@ export default function EditStudentScreen() {
             name="is_active"
             render={({ field: { onChange, value } }) => (
               <View style={styles.switchRow}>
-                <Text variant="bodyLarge" style={styles.switchLabel}>
-                  Aktif Öğrenci
-                </Text>
+                <View>
+                  <Text style={styles.switchLabel}>Aktif Öğrenci</Text>
+                  <Text style={styles.switchSubLabel}>Öğrenci listesinde göster</Text>
+                </View>
                 <Switch
                   value={value}
                   onValueChange={onChange}
-                  color="#6750A4"
+                  color={PRIMARY}
                 />
               </View>
             )}
@@ -230,29 +240,55 @@ export default function EditStudentScreen() {
 }
 
 const styles = StyleSheet.create({
+  screenBg: {
+    backgroundColor: '#F8F7FF',
+  },
   form: {
     gap: 4,
   },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#5B4FCF',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginTop: 4,
+    marginBottom: 4,
+    marginLeft: 2,
+  },
   divider: {
-    marginVertical: 8,
+    marginVertical: 12,
+    backgroundColor: '#E5E7EB',
   },
   switchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 4,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     marginBottom: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   switchLabel: {
-    color: '#1a1a1a',
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1E1B4B',
+  },
+  switchSubLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
   },
   submitButton: {
-    marginTop: 8,
+    marginTop: 12,
   },
   cancelButton: {
-    color: '#6750A4',
+    color: '#5B4FCF',
     fontSize: 16,
+    fontWeight: '600',
     marginLeft: 8,
   },
 });

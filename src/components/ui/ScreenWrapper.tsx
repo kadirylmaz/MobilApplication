@@ -52,7 +52,7 @@ export function ScreenWrapper({
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F8F7FF',
   },
   keyboard: {
     flex: 1,

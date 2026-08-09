@@ -30,6 +30,7 @@ export function AppButton({
       disabled={disabled || loading}
       style={[styles.button, style]}
       contentStyle={styles.content}
+      labelStyle={styles.label}
       {...rest}
     >
       {label}
@@ -39,10 +40,20 @@ export function AppButton({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 8,
+    borderRadius: 12,
     marginVertical: 6,
+    shadowColor: '#5B4FCF',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 4,
   },
   content: {
-    paddingVertical: 4,
+    height: 52,
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });

@@ -14,6 +14,22 @@ import { EmptyState } from '../../../src/components/ui/EmptyState';
 import { LoadingOverlay } from '../../../src/components/ui/LoadingOverlay';
 import type { LessonRow } from '../../../src/types/database';
 
+const PRIMARY = '#5B4FCF';
+const PRIMARY_LIGHT = '#EDE9FE';
+const SUCCESS = '#10B981';
+const TEXT_PRIMARY = '#1E1B4B';
+const TEXT_SECONDARY = '#6B7280';
+const BORDER = '#E5E7EB';
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('');
+}
+
 export default function StudentDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -55,6 +71,8 @@ export default function StudentDetailScreen() {
     );
   }
 
+  const initials = getInitials(student.full_name);
+
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -64,7 +82,7 @@ export default function StudentDetailScreen() {
             <MaterialCommunityIcons
               name="pencil"
               size={24}
-              color="#6750A4"
+              color={PRIMARY}
               onPress={handleEditStudent}
               style={styles.editIcon}
             />
@@ -84,88 +102,75 @@ export default function StudentDetailScreen() {
         ]}
         ListHeaderComponent={
           <View>
-            <Surface style={styles.infoCard} elevation={1}>
-              <View style={styles.nameRow}>
-                <Text variant="headlineSmall" style={styles.studentName}>
-                  {student.full_name}
-                </Text>
-                <Chip
-                  style={[
-                    styles.statusChip,
-                    student.is_active ? styles.chipActive : styles.chipInactive,
-                  ]}
-                  textStyle={[
-                    styles.chipText,
-                    student.is_active ? styles.chipTextActive : styles.chipTextInactive,
-                  ]}
-                  compact
-                >
-                  {student.is_active ? 'Aktif' : 'Pasif'}
-                </Chip>
-              </View>
-
-              {(student.grade || student.subject) && (
-                <View style={styles.metaRow}>
-                  {student.grade ? (
-                    <Text variant="bodyMedium" style={styles.metaText}>
-                      {student.grade}
-                    </Text>
-                  ) : null}
-                  {student.grade && student.subject ? (
-                    <Text variant="bodyMedium" style={styles.metaSeparator}>
-                      {'·'}
-                    </Text>
-                  ) : null}
-                  {student.subject ? (
-                    <Text variant="bodyMedium" style={styles.metaText}>
-                      {student.subject}
+            {/* Info Card with avatar */}
+            <View style={styles.infoCard}>
+              {/* Avatar + Name Row */}
+              <View style={styles.avatarRow}>
+                <View style={styles.avatarCircle}>
+                  <Text style={styles.avatarText}>{initials}</Text>
+                </View>
+                <View style={styles.nameBlock}>
+                  <Text style={styles.studentName} numberOfLines={1}>
+                    {student.full_name}
+                  </Text>
+                  {(student.grade || student.subject) ? (
+                    <Text style={styles.metaText}>
+                      {[student.grade, student.subject].filter(Boolean).join(' · ')}
                     </Text>
                   ) : null}
                 </View>
-              )}
+                <View style={[
+                  styles.statusPill,
+                  student.is_active ? styles.pillActive : styles.pillInactive,
+                ]}>
+                  <Text style={[
+                    styles.pillText,
+                    student.is_active ? styles.pillTextActive : styles.pillTextInactive,
+                  ]}>
+                    {student.is_active ? 'Aktif' : 'Pasif'}
+                  </Text>
+                </View>
+              </View>
 
-              <Divider style={styles.divider} />
+              {(student.phone || student.parent_name || student.parent_phone) ? (
+                <Divider style={styles.divider} />
+              ) : null}
 
               {student.phone ? (
                 <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="phone" size={18} color="#616161" />
-                  <Text variant="bodyMedium" style={styles.infoText}>
-                    {student.phone}
-                  </Text>
+                  <MaterialCommunityIcons name="phone" size={16} color={PRIMARY} />
+                  <Text style={styles.infoText}>{student.phone}</Text>
                 </View>
               ) : null}
 
               {student.parent_name ? (
                 <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="account" size={18} color="#616161" />
-                  <Text variant="bodyMedium" style={styles.infoText}>
-                    Veli: {student.parent_name}
-                  </Text>
+                  <MaterialCommunityIcons name="account" size={16} color={PRIMARY} />
+                  <Text style={styles.infoText}>Veli: {student.parent_name}</Text>
                 </View>
               ) : null}
 
               {student.parent_phone ? (
                 <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="phone-outline" size={18} color="#616161" />
-                  <Text variant="bodyMedium" style={styles.infoText}>
-                    {student.parent_phone}
-                  </Text>
+                  <MaterialCommunityIcons name="phone-outline" size={16} color={PRIMARY} />
+                  <Text style={styles.infoText}>{student.parent_phone}</Text>
                 </View>
               ) : null}
 
               {student.notes ? (
                 <>
                   <Divider style={styles.divider} />
-                  <Text variant="bodySmall" style={styles.notesText}>
-                    {student.notes}
-                  </Text>
+                  <Text style={styles.notesText}>{student.notes}</Text>
                 </>
               ) : null}
-            </Surface>
+            </View>
 
-            <Text variant="titleMedium" style={styles.sectionTitle}>
-              Ders Geçmişi
-            </Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Ders Geçmişi</Text>
+              <View style={styles.lessonCountBadge}>
+                <Text style={styles.lessonCountText}>{lessons.length}</Text>
+              </View>
+            </View>
           </View>
         }
         ListEmptyComponent={
@@ -185,6 +190,7 @@ export default function StudentDetailScreen() {
         label="Ders Ekle"
         style={styles.fab}
         onPress={handleAddLesson}
+        color="#FFFFFF"
       />
 
       <LoadingOverlay visible={isLoading} />
@@ -195,7 +201,7 @@ export default function StudentDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F8F7FF',
   },
   editIcon: {
     marginRight: 8,
@@ -209,54 +215,75 @@ const styles = StyleSheet.create({
   infoCard: {
     margin: 16,
     padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#5B4FCF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
-  nameRow: {
+  avatarRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
+    gap: 12,
     marginBottom: 4,
+  },
+  avatarCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: PRIMARY,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  avatarText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  nameBlock: {
+    flex: 1,
+    gap: 3,
   },
   studentName: {
-    flex: 1,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#1a1a1a',
-  },
-  statusChip: {
-    alignSelf: 'center',
-  },
-  chipActive: {
-    backgroundColor: '#E8F5E9',
-  },
-  chipInactive: {
-    backgroundColor: '#EEEEEE',
-  },
-  chipText: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  chipTextActive: {
-    color: '#2E7D32',
-  },
-  chipTextInactive: {
-    color: '#757575',
-  },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
+    color: TEXT_PRIMARY,
   },
   metaText: {
-    color: '#616161',
+    fontSize: 13,
+    color: TEXT_SECONDARY,
+    fontWeight: '500',
   },
-  metaSeparator: {
-    color: '#BDBDBD',
+  statusPill: {
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    flexShrink: 0,
+  },
+  pillActive: {
+    backgroundColor: '#D1FAE5',
+  },
+  pillInactive: {
+    backgroundColor: '#F3F4F6',
+  },
+  pillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  pillTextActive: {
+    color: SUCCESS,
+  },
+  pillTextInactive: {
+    color: TEXT_SECONDARY,
   },
   divider: {
     marginVertical: 12,
+    backgroundColor: BORDER,
   },
   infoRow: {
     flexDirection: 'row',
@@ -265,24 +292,49 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   infoText: {
-    color: '#424242',
+    fontSize: 14,
+    color: TEXT_PRIMARY,
+    fontWeight: '500',
   },
   notesText: {
-    color: '#616161',
+    fontSize: 13,
+    color: TEXT_SECONDARY,
     fontStyle: 'italic',
     lineHeight: 20,
   },
-  sectionTitle: {
-    fontWeight: '600',
-    color: '#1a1a1a',
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginHorizontal: 16,
     marginTop: 8,
     marginBottom: 4,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: TEXT_PRIMARY,
+  },
+  lessonCountBadge: {
+    backgroundColor: PRIMARY_LIGHT,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  lessonCountText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: PRIMARY,
   },
   fab: {
     position: 'absolute',
     right: 16,
     bottom: 16,
-    backgroundColor: '#6750A4',
+    backgroundColor: PRIMARY,
+    shadowColor: PRIMARY,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 8,
   },
 });

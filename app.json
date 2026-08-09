@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Ders Defteri",
+    "slug": "ders-defteri",
+    "scheme": "ders-defteri",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#5B4FCF"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.dersdefteri.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#5B4FCF"
+      },
+      "package": "com.dersdefteri.app"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
