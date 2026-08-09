@@ -18,12 +18,7 @@ import { AppTextInput } from '../../../../src/components/ui/AppTextInput';
 import { AppButton } from '../../../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../../../src/components/ui/ErrorMessage';
 import { HeaderBackButton } from '../../../../src/components/ui/HeaderBackButton';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing, typography } from '../../../../src/theme';
 
 export default function EditPaymentScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -95,7 +90,7 @@ export default function EditPaymentScreen() {
         <View style={styles.form}>
           <View style={styles.studentDisplay}>
             <View style={styles.studentDisplayIcon}>
-              <MaterialCommunityIcons name="account" size={20} color={PRIMARY} />
+              <MaterialCommunityIcons name="account" size={20} color={colors.seal} />
             </View>
             <View style={styles.studentDisplayInfo}>
               <Text style={styles.studentLabel}>Öğrenci</Text>
@@ -238,37 +233,34 @@ export default function EditPaymentScreen() {
 
 const styles = StyleSheet.create({
   screenBg: {
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   form: {
     gap: 4,
   },
   sectionLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: PRIMARY,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginTop: 8,
-    marginBottom: 4,
+    ...typography.eyebrow,
+    color: colors.seal,
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
     marginLeft: 2,
   },
   studentDisplay: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: PRIMARY_LIGHT,
-    marginBottom: 8,
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.md,
+    backgroundColor: colors.sealSoft,
+    marginBottom: spacing.sm,
     borderWidth: 1,
-    borderColor: 'rgba(91,79,207,0.2)',
+    borderColor: colors.border,
   },
   studentDisplayIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.paperRaised,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
@@ -279,7 +271,7 @@ const styles = StyleSheet.create({
   studentLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: PRIMARY,
+    color: colors.seal,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 2,
@@ -287,36 +279,36 @@ const styles = StyleSheet.create({
   studentName: {
     fontSize: 16,
     fontWeight: '700',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   statusRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 8,
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
   },
   statusChip: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 10,
+    paddingVertical: spacing.sm + 2,
+    borderRadius: radius.sm,
     alignItems: 'center',
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.paperShade,
     borderWidth: 1,
-    borderColor: BORDER,
+    borderColor: colors.border,
   },
   statusChipActive: {
-    backgroundColor: PRIMARY_LIGHT,
-    borderColor: PRIMARY,
+    backgroundColor: colors.sealSoft,
+    borderColor: colors.seal,
   },
   statusChipText: {
     fontSize: 12,
     fontWeight: '600',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
   },
   statusChipTextActive: {
-    color: PRIMARY,
+    color: colors.sealDeep,
     fontWeight: '700',
   },
   submitButton: {
-    marginTop: 12,
+    marginTop: spacing.md,
   },
 });

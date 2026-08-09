@@ -6,12 +6,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Searchbar, Text } from 'react-native-paper';
 import { useStudentStore } from '../../store/studentStore';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing } from '../../theme';
 
 const FILTER_BUTTONS = [
   { value: 'active', label: 'Aktif' },
@@ -45,7 +40,7 @@ export function StudentFiltersBar() {
         style={styles.searchbar}
         inputStyle={styles.searchInput}
         elevation={0}
-        placeholderTextColor={TEXT_SECONDARY}
+        placeholderTextColor={colors.textSecondary}
       />
       <ScrollView
         horizontal
@@ -74,48 +69,48 @@ export function StudentFiltersBar() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 10,
-    gap: 10,
-    backgroundColor: '#FFFFFF',
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm + 2,
+    gap: spacing.sm + 2,
+    backgroundColor: colors.paperRaised,
     borderBottomWidth: 1,
-    borderBottomColor: BORDER,
+    borderBottomColor: colors.border,
   },
   searchbar: {
-    backgroundColor: '#F8F7FF',
-    borderRadius: 20,
+    backgroundColor: colors.paper,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: BORDER,
+    borderColor: colors.border,
     height: 44,
   },
   searchInput: {
     fontSize: 14,
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   pillsRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
     paddingRight: 4,
   },
   pill: {
-    borderRadius: 20,
-    paddingHorizontal: 18,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.lg + 2,
     paddingVertical: 7,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.paperShade,
     borderWidth: 1,
-    borderColor: BORDER,
+    borderColor: colors.border,
   },
   pillSelected: {
-    backgroundColor: PRIMARY_LIGHT,
-    borderColor: PRIMARY,
+    backgroundColor: colors.sealSoft,
+    borderColor: colors.seal,
   },
   pillText: {
     fontSize: 13,
     fontWeight: '600',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
   },
   pillTextSelected: {
-    color: PRIMARY,
+    color: colors.sealDeep,
   },
 });

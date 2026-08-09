@@ -18,9 +18,7 @@ import { AppTextInput } from '../../../src/components/ui/AppTextInput';
 import { AppButton } from '../../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../../src/components/ui/ErrorMessage';
 import { HeaderBackButton } from '../../../src/components/ui/HeaderBackButton';
-
-const PRIMARY = '#5B4FCF';
-const TEXT_SECONDARY = '#6B7280';
+import { colors } from '../../../src/theme';
 
 export default function EditProfileScreen() {
   const router = useRouter();
@@ -123,7 +121,7 @@ export default function EditProfileScreen() {
 
 const styles = StyleSheet.create({
   screenBg: {
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   form: {
     gap: 4,
@@ -131,7 +129,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: PRIMARY,
+    color: colors.seal,
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginTop: 4,
@@ -140,7 +138,7 @@ const styles = StyleSheet.create({
   },
   emailNote: {
     fontSize: 12,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     marginTop: 4,
     marginLeft: 2,
   },

@@ -8,13 +8,7 @@ import { Text } from 'react-native-paper';
 import { format, parseISO } from 'date-fns';
 import { tr } from 'date-fns/locale/tr';
 import type { PaymentRow, PaymentStatus } from '../../types/database';
-
-const SUCCESS = '#10B981';
-const WARNING = '#F59E0B';
-const ERROR_COLOR = '#EF4444';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing } from '../../theme';
 
 interface PaymentCardProps {
   payment: PaymentRow;
@@ -29,9 +23,15 @@ const STATUS_LABELS: Record<PaymentStatus, string> = {
 };
 
 const STATUS_COLORS: Record<PaymentStatus, string> = {
-  pending: WARNING,
-  paid: SUCCESS,
-  overdue: ERROR_COLOR,
+  pending: colors.slate,
+  paid: colors.moss,
+  overdue: colors.rust,
+};
+
+const STATUS_SOFT_COLORS: Record<PaymentStatus, string> = {
+  pending: colors.slateSoft,
+  paid: colors.mossSoft,
+  overdue: colors.rustSoft,
 };
 
 function isOverdue(payment: PaymentRow): boolean {
@@ -53,6 +53,7 @@ export function PaymentCard({ payment, studentName, onPress }: PaymentCardProps)
   const overdue = isOverdue(payment);
   const effectiveStatus: PaymentStatus = overdue ? 'overdue' : payment.status;
   const statusColor = STATUS_COLORS[effectiveStatus];
+  const statusSoftColor = STATUS_SOFT_COLORS[effectiveStatus];
   const statusLabel = STATUS_LABELS[effectiveStatus];
 
   return (
@@ -71,7 +72,7 @@ export function PaymentCard({ payment, studentName, onPress }: PaymentCardProps)
             <Text style={styles.period}>{formatPeriod(payment.period_start, payment.period_end)}</Text>
           </View>
 
-          <View style={[styles.statusBadge, { backgroundColor: statusColor + '18' }]}>
+          <View style={[styles.statusBadge, { backgroundColor: statusSoftColor }]}>
             <Text style={[styles.statusText, { color: statusColor }]}>{statusLabel}</Text>
           </View>
         </View>
@@ -83,34 +84,34 @@ export function PaymentCard({ payment, studentName, onPress }: PaymentCardProps)
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    marginHorizontal: 16,
+    marginHorizontal: spacing.lg,
     marginVertical: 5,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    backgroundColor: colors.paperRaised,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: BORDER,
+    borderColor: colors.border,
     overflow: 'hidden',
-    shadowColor: '#5B4FCF',
+    shadowColor: colors.ink,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.05,
     shadowRadius: 6,
     elevation: 2,
   },
   accentBar: {
     width: 4,
-    borderTopLeftRadius: 14,
-    borderBottomLeftRadius: 14,
+    borderTopLeftRadius: radius.md,
+    borderBottomLeftRadius: radius.md,
   },
   content: {
     flex: 1,
-    paddingVertical: 13,
-    paddingHorizontal: 14,
+    paddingVertical: spacing.md + 1,
+    paddingHorizontal: spacing.md + 2,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   info: {
     flex: 1,
@@ -118,22 +119,22 @@ const styles = StyleSheet.create({
   },
   studentName: {
     fontSize: 11,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   amount: {
     fontSize: 16,
     fontWeight: '700',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   period: {
     fontSize: 12,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   statusBadge: {
-    borderRadius: 20,
-    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 5,
     alignSelf: 'flex-start',
     flexShrink: 0,

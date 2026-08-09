@@ -5,6 +5,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
+import { colors } from '../../theme';
 
 interface ErrorMessageProps {
   message: string | null | undefined;
@@ -18,8 +19,9 @@ export function ErrorMessage({ message }: ErrorMessageProps) {
 
 const styles = StyleSheet.create({
   error: {
-    color: '#B00020',
+    color: colors.rust,
     fontSize: 13,
+    fontWeight: '600',
     marginVertical: 6,
     paddingHorizontal: 4,
   },

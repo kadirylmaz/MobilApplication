@@ -14,14 +14,7 @@ import { PaymentCard } from '../../../src/components/payment/PaymentCard';
 import { EmptyState } from '../../../src/components/ui/EmptyState';
 import { LoadingOverlay } from '../../../src/components/ui/LoadingOverlay';
 import type { PaymentRow, PaymentStatus } from '../../../src/types/database';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const SUCCESS = '#10B981';
-const WARNING = '#F59E0B';
-const ERROR_COLOR = '#EF4444';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
+import { colors, radius, spacing, typography } from '../../../src/theme';
 
 type StatusFilter = 'all' | PaymentStatus;
 
@@ -97,21 +90,21 @@ export default function PaymentsScreen() {
       </View>
 
       <View style={styles.summaryRow}>
-        <View style={[styles.summaryCard, { borderColor: SUCCESS + '33' }]}>
+        <View style={[styles.summaryCard, { borderColor: colors.moss + '33' }]}>
           <Text style={styles.summaryLabel}>Bu Ay Gelir</Text>
-          <Text style={[styles.summaryValue, { color: SUCCESS }]}>
+          <Text style={[styles.summaryValue, { color: colors.moss }]}>
             {formatAmount(summary.totalRevenue)}
           </Text>
         </View>
-        <View style={[styles.summaryCard, { borderColor: WARNING + '33' }]}>
+        <View style={[styles.summaryCard, { borderColor: colors.slate + '33' }]}>
           <Text style={styles.summaryLabel}>Bekleyen</Text>
-          <Text style={[styles.summaryValue, { color: WARNING }]}>
+          <Text style={[styles.summaryValue, { color: colors.slate }]}>
             {formatAmount(summary.pendingAmount)}
           </Text>
         </View>
-        <View style={[styles.summaryCard, { borderColor: ERROR_COLOR + '33' }]}>
+        <View style={[styles.summaryCard, { borderColor: colors.rust + '33' }]}>
           <Text style={styles.summaryLabel}>Gecikmiş</Text>
-          <Text style={[styles.summaryValue, { color: ERROR_COLOR }]}>
+          <Text style={[styles.summaryValue, { color: colors.rust }]}>
             {formatAmount(summary.overdueAmount)}
           </Text>
         </View>
@@ -184,46 +177,41 @@ export default function PaymentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   header: {
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     paddingTop: 56,
-    paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.paperRaised,
   },
   headerTitle: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: TEXT_PRIMARY,
-    letterSpacing: -0.5,
+    ...typography.h1,
   },
   headerSubtitle: {
-    fontSize: 13,
-    color: TEXT_SECONDARY,
+    ...typography.bodySecondary,
     marginTop: 2,
-    fontWeight: '500',
   },
   summaryRow: {
     flexDirection: 'row',
-    gap: 10,
-    paddingHorizontal: 16,
-    paddingTop: 14,
+    gap: spacing.sm + 2,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md + 2,
     paddingBottom: 4,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.paperRaised,
   },
   summaryCard: {
     flex: 1,
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#F8F7FF',
+    padding: spacing.md,
+    borderRadius: radius.md,
+    backgroundColor: colors.paper,
     borderWidth: 1,
     gap: 4,
   },
   summaryLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
@@ -233,33 +221,33 @@ const styles = StyleSheet.create({
   },
   filterRow: {
     flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    backgroundColor: '#FFFFFF',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md + 2,
+    backgroundColor: colors.paperRaised,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   filterChip: {
-    paddingHorizontal: 14,
+    paddingHorizontal: spacing.md + 2,
     paddingVertical: 7,
-    borderRadius: 20,
-    backgroundColor: '#F3F4F6',
+    borderRadius: radius.lg,
+    backgroundColor: colors.paperShade,
   },
   filterChipActive: {
-    backgroundColor: PRIMARY_LIGHT,
+    backgroundColor: colors.sealSoft,
   },
   filterChipText: {
     fontSize: 12,
     fontWeight: '600',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
   },
   filterChipTextActive: {
-    color: PRIMARY,
+    color: colors.sealDeep,
     fontWeight: '700',
   },
   listContent: {
-    paddingTop: 12,
+    paddingTop: spacing.md,
     paddingBottom: 96,
   },
   emptyListContent: {
@@ -267,11 +255,11 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: 20,
-    bottom: 20,
-    backgroundColor: PRIMARY,
-    borderRadius: 18,
-    shadowColor: PRIMARY,
+    right: spacing.xl,
+    bottom: spacing.xl,
+    backgroundColor: colors.seal,
+    borderRadius: radius.lg,
+    shadowColor: colors.seal,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 10,

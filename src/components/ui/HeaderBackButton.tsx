@@ -6,8 +6,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-const PRIMARY = '#5B4FCF';
+import { colors } from '../../theme';
 
 export function HeaderBackButton() {
   const router = useRouter();
@@ -16,7 +15,7 @@ export function HeaderBackButton() {
     <MaterialCommunityIcons
       name="arrow-left"
       size={24}
-      color={PRIMARY}
+      color={colors.ink}
       onPress={() => router.back()}
       style={styles.icon}
       hitSlop={8}

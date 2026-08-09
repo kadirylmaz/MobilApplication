@@ -15,11 +15,7 @@ import { AppTextInput } from '../../../src/components/ui/AppTextInput';
 import { AppButton } from '../../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../../src/components/ui/ErrorMessage';
 import { HeaderBackButton } from '../../../src/components/ui/HeaderBackButton';
-
-const PRIMARY = '#5B4FCF';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing, typography } from '../../../src/theme';
 
 export default function NewStudentScreen() {
   const router = useRouter();
@@ -193,7 +189,7 @@ export default function NewStudentScreen() {
                 <Switch
                   value={value}
                   onValueChange={onChange}
-                  color={PRIMARY}
+                  color={colors.seal}
                 />
               </View>
             )}
@@ -215,48 +211,45 @@ export default function NewStudentScreen() {
 
 const styles = StyleSheet.create({
   screenBg: {
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   form: {
     gap: 4,
   },
   sectionLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#5B4FCF',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginTop: 4,
-    marginBottom: 4,
+    ...typography.eyebrow,
+    color: colors.seal,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
     marginLeft: 2,
   },
   divider: {
-    marginVertical: 12,
-    backgroundColor: '#E5E7EB',
+    marginVertical: spacing.md,
+    backgroundColor: colors.border,
   },
   switchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    paddingVertical: spacing.md + 2,
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.paperRaised,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   switchLabel: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1E1B4B',
+    color: colors.ink,
   },
   switchSubLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textSecondary,
     marginTop: 2,
   },
   submitButton: {
-    marginTop: 12,
+    marginTop: spacing.md,
   },
 });

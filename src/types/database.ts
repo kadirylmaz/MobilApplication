@@ -19,22 +19,29 @@ export type PaymentStatus = 'pending' | 'paid' | 'overdue';
 /** Materyal dosya tipi */
 export type FileType = 'pdf' | 'image' | 'video' | 'document' | 'other';
 
+/** Kullanıcı rolü */
+export type ProfileRole = 'teacher' | 'student' | 'parent';
+
 // -----------------------------------------------------------------------------
 // SATIR TİPLERİ (Row — SELECT sonuçları)
 // -----------------------------------------------------------------------------
 
-export interface TeacherRow {
+export interface ProfileRow {
   id: string;
-  user_id: string;
+  user_id: string | null; // NULL = henüz hesap açmamış (davet bekleyen öğrenci/veli)
+  role: ProfileRole;
   full_name: string;
   phone: string | null;
   email: string | null;
+  avatar_url: string | null;
   created_at: string; // ISO 8601 string (TIMESTAMPTZ)
+  updated_at: string;
 }
 
 export interface StudentRow {
   id: string;
   teacher_id: string;
+  profile_id: string | null; // öğrenci kendi hesabını açtığında dolar
   full_name: string;
   phone: string | null;
   parent_name: string | null;
@@ -85,22 +92,81 @@ export interface MaterialRow {
   created_at: string;
 }
 
+export interface GroupRow {
+  id: string;
+  teacher_id: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GroupMemberRow {
+  id: string;
+  group_id: string;
+  student_id: string;
+  created_at: string;
+}
+
+export interface PostRow {
+  id: string;
+  teacher_id: string;
+  group_id: string | null; // NULL = herkese açık (tüm öğrenci/veliler)
+  content: string;
+  video_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PostLikeRow {
+  id: string;
+  post_id: string;
+  profile_id: string;
+  created_at: string;
+}
+
+export interface PostCommentRow {
+  id: string;
+  post_id: string;
+  profile_id: string;
+  content: string;
+  created_at: string;
+}
+
+export interface TeacherStudentRow {
+  id: string;
+  teacher_id: string;
+  student_id: string;
+  created_at: string;
+}
+
+export interface ParentStudentRow {
+  id: string;
+  parent_id: string;
+  student_id: string;
+  created_at: string;
+}
+
 // -----------------------------------------------------------------------------
 // INSERT TİPLERİ (veritabanına yeni kayıt eklerken kullanılır)
 // -----------------------------------------------------------------------------
 
-export interface TeacherInsert {
+export interface ProfileInsert {
   id?: string;
-  user_id: string;
+  user_id?: string | null;
+  role?: ProfileRole;
   full_name: string;
   phone?: string | null;
   email?: string | null;
+  avatar_url?: string | null;
   created_at?: string;
+  updated_at?: string;
 }
 
 export interface StudentInsert {
   id?: string;
   teacher_id: string;
+  profile_id?: string | null;
   full_name: string;
   phone?: string | null;
   parent_name?: string | null;
@@ -151,19 +217,64 @@ export interface MaterialInsert {
   created_at?: string;
 }
 
+export interface GroupInsert {
+  id?: string;
+  teacher_id: string;
+  name: string;
+  description?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface GroupMemberInsert {
+  id?: string;
+  group_id: string;
+  student_id: string;
+  created_at?: string;
+}
+
+export interface PostInsert {
+  id?: string;
+  teacher_id: string;
+  group_id?: string | null;
+  content: string;
+  video_url?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface PostLikeInsert {
+  id?: string;
+  post_id: string;
+  profile_id: string;
+  created_at?: string;
+}
+
+export interface PostCommentInsert {
+  id?: string;
+  post_id: string;
+  profile_id: string;
+  content: string;
+  created_at?: string;
+}
+
 // -----------------------------------------------------------------------------
 // UPDATE TİPLERİ (mevcut kaydı güncellerken kullanılır — tüm alanlar opsiyonel)
 // -----------------------------------------------------------------------------
 
-export type TeacherUpdate = Partial<Omit<TeacherInsert, 'id' | 'user_id' | 'created_at'>>;
+export type ProfileUpdate = Partial<Omit<ProfileInsert, 'id' | 'user_id' | 'created_at'>> & Record<string, unknown>;
 
-export type StudentUpdate = Partial<Omit<StudentInsert, 'id' | 'teacher_id' | 'created_at'>>;
+export type StudentUpdate = Partial<Omit<StudentInsert, 'id' | 'teacher_id' | 'created_at'>> & Record<string, unknown>;
 
-export type LessonUpdate = Partial<Omit<LessonInsert, 'id' | 'teacher_id' | 'created_at'>>;
+export type LessonUpdate = Partial<Omit<LessonInsert, 'id' | 'teacher_id' | 'created_at'>> & Record<string, unknown>;
 
-export type PaymentUpdate = Partial<Omit<PaymentInsert, 'id' | 'teacher_id' | 'created_at'>>;
+export type PaymentUpdate = Partial<Omit<PaymentInsert, 'id' | 'teacher_id' | 'created_at'>> & Record<string, unknown>;
 
-export type MaterialUpdate = Partial<Omit<MaterialInsert, 'id' | 'teacher_id' | 'created_at'>>;
+export type MaterialUpdate = Partial<Omit<MaterialInsert, 'id' | 'teacher_id' | 'created_at'>> & Record<string, unknown>;
+
+export type GroupUpdate = Partial<Omit<GroupInsert, 'id' | 'teacher_id' | 'created_at'>> & Record<string, unknown>;
+
+export type PostUpdate = Partial<Omit<PostInsert, 'id' | 'teacher_id' | 'created_at'>> & Record<string, unknown>;
 
 // -----------------------------------------------------------------------------
 // ANA DATABASE TİPİ (Supabase client için generic type)
@@ -172,35 +283,83 @@ export type MaterialUpdate = Partial<Omit<MaterialInsert, 'id' | 'teacher_id' | 
 export interface Database {
   public: {
     Tables: {
-      teachers: {
-        Row: TeacherRow;
-        Insert: TeacherInsert;
-        Update: TeacherUpdate;
+      profiles: {
+        Row: ProfileRow;
+        Insert: ProfileInsert;
+        Update: ProfileUpdate;
+        Relationships: [];
       };
       students: {
         Row: StudentRow;
         Insert: StudentInsert;
         Update: StudentUpdate;
+        Relationships: [];
       };
       lessons: {
         Row: LessonRow;
         Insert: LessonInsert;
         Update: LessonUpdate;
+        Relationships: [];
       };
       payments: {
         Row: PaymentRow;
         Insert: PaymentInsert;
         Update: PaymentUpdate;
+        Relationships: [];
       };
       materials: {
         Row: MaterialRow;
         Insert: MaterialInsert;
         Update: MaterialUpdate;
+        Relationships: [];
+      };
+      groups: {
+        Row: GroupRow;
+        Insert: GroupInsert;
+        Update: GroupUpdate;
+        Relationships: [];
+      };
+      group_members: {
+        Row: GroupMemberRow;
+        Insert: GroupMemberInsert;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      posts: {
+        Row: PostRow;
+        Insert: PostInsert;
+        Update: PostUpdate;
+        Relationships: [];
+      };
+      post_likes: {
+        Row: PostLikeRow;
+        Insert: PostLikeInsert;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      post_comments: {
+        Row: PostCommentRow;
+        Insert: PostCommentInsert;
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      teacher_student: {
+        Row: TeacherStudentRow;
+        Insert: Omit<TeacherStudentRow, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      parent_student: {
+        Row: ParentStudentRow;
+        Insert: Omit<ParentStudentRow, 'id' | 'created_at'> & { id?: string; created_at?: string };
+        Update: Record<string, never>;
+        Relationships: [];
       };
     };
     Views: {
       active_students: {
         Row: StudentRow;
+        Relationships: [];
       };
       upcoming_lessons: {
         Row: LessonRow & {
@@ -208,11 +367,13 @@ export interface Database {
           student_grade: string | null;
           student_subject: string | null;
         };
+        Relationships: [];
       };
       overdue_payments: {
         Row: PaymentRow & {
           student_name: string;
         };
+        Relationships: [];
       };
     };
     Functions: {
@@ -224,6 +385,7 @@ export interface Database {
     Enums: {
       lesson_status: LessonStatus;
       payment_status: PaymentStatus;
+      profile_role: ProfileRole;
     };
   };
 }
@@ -233,11 +395,13 @@ export interface Database {
 // -----------------------------------------------------------------------------
 
 /** Supabase'den gelen ham tablo satırları */
-export type Teacher  = TeacherRow;
+export type Profile = ProfileRow;
 export type Student  = StudentRow;
 export type Lesson   = LessonRow;
 export type Payment  = PaymentRow;
 export type Material = MaterialRow;
+export type Group    = GroupRow;
+export type Post     = PostRow;
 
 /** JOIN'li sorgular için genişletilmiş tipler */
 export interface LessonWithStudent extends LessonRow {
@@ -259,4 +423,17 @@ export interface StudentWithStats extends StudentRow {
   completed_lessons: number;
   /** Bekleyen ödeme tutarı */
   pending_payment_amount: number;
+}
+
+/** Grup, üye sayısıyla birlikte */
+export interface GroupWithMemberCount extends GroupRow {
+  member_count: number;
+}
+
+/** İleti, grup adı ve etkileşim sayılarıyla birlikte */
+export interface PostWithMeta extends PostRow {
+  groups: Pick<GroupRow, 'id' | 'name'> | null;
+  like_count: number;
+  comment_count: number;
+  liked_by_me: boolean;
 }

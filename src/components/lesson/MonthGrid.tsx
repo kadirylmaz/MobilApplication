@@ -20,13 +20,7 @@ import {
 } from 'date-fns';
 import { tr } from 'date-fns/locale/tr';
 import type { LessonRow } from '../../types/database';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const TEXT_MUTED = '#C7C9D9';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing } from '../../theme';
 
 const WEEKDAY_LABELS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
@@ -65,13 +59,13 @@ export function MonthGrid({
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onPrevMonth} style={styles.navButton} hitSlop={8}>
-          <MaterialCommunityIcons name="chevron-left" size={22} color={PRIMARY} />
+          <MaterialCommunityIcons name="chevron-left" size={22} color={colors.slate} />
         </TouchableOpacity>
         <Text style={styles.rangeLabel}>
           {format(monthDate, 'MMMM yyyy', { locale: tr })}
         </Text>
         <TouchableOpacity onPress={onNextMonth} style={styles.navButton} hitSlop={8}>
-          <MaterialCommunityIcons name="chevron-right" size={22} color={PRIMARY} />
+          <MaterialCommunityIcons name="chevron-right" size={22} color={colors.slate} />
         </TouchableOpacity>
       </View>
 
@@ -122,50 +116,50 @@ const CELL_SIZE_PERCENT = `${100 / 7}%` as const;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.paperRaised,
     borderBottomWidth: 1,
-    borderBottomColor: BORDER,
-    paddingTop: 12,
-    paddingBottom: 8,
+    borderBottomColor: colors.border,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.md,
   },
   navButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: PRIMARY_LIGHT,
+    backgroundColor: colors.slateSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
   rangeLabel: {
     fontSize: 14,
     fontWeight: '700',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
     textTransform: 'capitalize',
   },
   weekdayRow: {
     flexDirection: 'row',
-    paddingHorizontal: 8,
-    marginBottom: 4,
+    paddingHorizontal: spacing.sm,
+    marginBottom: spacing.xs,
   },
   weekdayLabel: {
     width: CELL_SIZE_PERCENT,
     textAlign: 'center',
     fontSize: 11,
     fontWeight: '600',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
   },
   dayCell: {
     width: CELL_SIZE_PERCENT,
@@ -177,7 +171,7 @@ const styles = StyleSheet.create({
   dayNumber: {
     fontSize: 14,
     fontWeight: '600',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
     width: 32,
     height: 32,
     lineHeight: 32,
@@ -185,11 +179,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   dayNumberMuted: {
-    color: TEXT_MUTED,
+    color: colors.textMuted,
   },
   dayNumberSelected: {
     color: '#FFFFFF',
-    backgroundColor: PRIMARY,
+    backgroundColor: colors.seal,
     overflow: 'hidden',
   },
   lessonDot: {
@@ -198,7 +192,7 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: PRIMARY,
+    backgroundColor: colors.slate,
   },
   lessonDotSelected: {
     backgroundColor: '#FFFFFF',
@@ -209,6 +203,6 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: PRIMARY,
+    borderColor: colors.seal,
   },
 });

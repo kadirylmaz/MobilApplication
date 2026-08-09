@@ -8,12 +8,7 @@ import { Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { addDays, format, isSameDay, isToday } from 'date-fns';
 import { tr } from 'date-fns/locale/tr';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing } from '../../theme';
 
 interface WeekStripProps {
   weekStart: Date;
@@ -37,13 +32,13 @@ export function WeekStrip({
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onPrevWeek} style={styles.navButton} hitSlop={8}>
-          <MaterialCommunityIcons name="chevron-left" size={22} color={PRIMARY} />
+          <MaterialCommunityIcons name="chevron-left" size={22} color={colors.slate} />
         </TouchableOpacity>
         <Text style={styles.rangeLabel}>
           {format(weekStart, 'd MMM', { locale: tr })} – {format(weekEnd, 'd MMM yyyy', { locale: tr })}
         </Text>
         <TouchableOpacity onPress={onNextWeek} style={styles.navButton} hitSlop={8}>
-          <MaterialCommunityIcons name="chevron-right" size={22} color={PRIMARY} />
+          <MaterialCommunityIcons name="chevron-right" size={22} color={colors.slate} />
         </TouchableOpacity>
       </View>
 
@@ -78,52 +73,52 @@ export function WeekStrip({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.paperRaised,
     borderBottomWidth: 1,
-    borderBottomColor: BORDER,
-    paddingTop: 12,
-    paddingBottom: 14,
+    borderBottomColor: colors.border,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.md + 2,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.md,
   },
   navButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: PRIMARY_LIGHT,
+    backgroundColor: colors.slateSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
   rangeLabel: {
     fontSize: 14,
     fontWeight: '700',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   daysRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.md,
   },
   dayCell: {
     flex: 1,
     marginHorizontal: 3,
-    paddingVertical: 8,
-    borderRadius: 12,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.md,
     alignItems: 'center',
     gap: 4,
   },
   dayCellSelected: {
-    backgroundColor: PRIMARY,
+    backgroundColor: colors.seal,
   },
   dayName: {
     fontSize: 11,
     fontWeight: '600',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
   },
   dayNameSelected: {
@@ -132,7 +127,7 @@ const styles = StyleSheet.create({
   dayNumber: {
     fontSize: 15,
     fontWeight: '700',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   dayNumberSelected: {
     color: '#FFFFFF',
@@ -141,7 +136,7 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: PRIMARY,
+    backgroundColor: colors.seal,
   },
   todayDotSelected: {
     backgroundColor: '#FFFFFF',

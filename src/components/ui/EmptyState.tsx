@@ -5,11 +5,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
+import { colors } from '../../theme';
 
 interface EmptyStateProps {
   icon: string;
@@ -22,7 +18,7 @@ export function EmptyState({ icon, title, subtitle }: EmptyStateProps) {
     <View style={styles.container}>
       <View style={styles.iconWrapper}>
         <View style={styles.iconCircle}>
-          <Icon source={icon} size={48} color={PRIMARY} />
+          <Icon source={icon} size={48} color={colors.seal} />
         </View>
       </View>
       <Text style={styles.title}>{title}</Text>
@@ -48,7 +44,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: PRIMARY_LIGHT,
+    backgroundColor: colors.sealSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -56,12 +52,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     textAlign: 'center',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     lineHeight: 21,
   },
 });

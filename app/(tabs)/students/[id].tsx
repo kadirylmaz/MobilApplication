@@ -4,7 +4,7 @@
 
 import React, { useEffect, useMemo } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Card, Chip, Divider, FAB, Surface, Text } from 'react-native-paper';
+import { Divider, FAB, Text } from 'react-native-paper';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useStudents } from '../../../src/hooks/useStudents';
@@ -15,15 +15,7 @@ import { EmptyState } from '../../../src/components/ui/EmptyState';
 import { LoadingOverlay } from '../../../src/components/ui/LoadingOverlay';
 import { HeaderBackButton } from '../../../src/components/ui/HeaderBackButton';
 import type { LessonRow } from '../../../src/types/database';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const SUCCESS = '#10B981';
-const WARNING = '#F59E0B';
-const ERROR_COLOR = '#EF4444';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing, typography } from '../../../src/theme';
 
 function formatAmount(amount: number): string {
   return `${amount.toLocaleString('tr-TR', { maximumFractionDigits: 0 })} ₺`;
@@ -118,8 +110,8 @@ export default function StudentDetailScreen() {
           headerRight: () => (
             <MaterialCommunityIcons
               name="pencil"
-              size={24}
-              color={PRIMARY}
+              size={22}
+              color={colors.ink}
               onPress={handleEditStudent}
               style={styles.editIcon}
             />
@@ -141,65 +133,68 @@ export default function StudentDetailScreen() {
           <View>
             {/* Info Card with avatar */}
             <View style={styles.infoCard}>
-              {/* Avatar + Name Row */}
-              <View style={styles.avatarRow}>
-                <View style={styles.avatarCircle}>
-                  <Text style={styles.avatarText}>{initials}</Text>
-                </View>
-                <View style={styles.nameBlock}>
-                  <Text style={styles.studentName} numberOfLines={1}>
-                    {student.full_name}
-                  </Text>
-                  {(student.grade || student.subject) ? (
-                    <Text style={styles.metaText}>
-                      {[student.grade, student.subject].filter(Boolean).join(' · ')}
+              <View style={styles.infoCardTabStrip} />
+              <View style={styles.infoCardBody}>
+                {/* Avatar + Name Row */}
+                <View style={styles.avatarRow}>
+                  <View style={styles.avatarCircle}>
+                    <Text style={styles.avatarText}>{initials}</Text>
+                  </View>
+                  <View style={styles.nameBlock}>
+                    <Text style={styles.studentName} numberOfLines={1}>
+                      {student.full_name}
                     </Text>
-                  ) : null}
-                </View>
-                <View style={[
-                  styles.statusPill,
-                  student.is_active ? styles.pillActive : styles.pillInactive,
-                ]}>
-                  <Text style={[
-                    styles.pillText,
-                    student.is_active ? styles.pillTextActive : styles.pillTextInactive,
+                    {(student.grade || student.subject) ? (
+                      <Text style={styles.metaText}>
+                        {[student.grade, student.subject].filter(Boolean).join(' · ')}
+                      </Text>
+                    ) : null}
+                  </View>
+                  <View style={[
+                    styles.statusPill,
+                    student.is_active ? styles.pillActive : styles.pillInactive,
                   ]}>
-                    {student.is_active ? 'Aktif' : 'Pasif'}
-                  </Text>
+                    <Text style={[
+                      styles.pillText,
+                      student.is_active ? styles.pillTextActive : styles.pillTextInactive,
+                    ]}>
+                      {student.is_active ? 'Aktif' : 'Pasif'}
+                    </Text>
+                  </View>
                 </View>
-              </View>
 
-              {(student.phone || student.parent_name || student.parent_phone) ? (
-                <Divider style={styles.divider} />
-              ) : null}
-
-              {student.phone ? (
-                <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="phone" size={16} color={PRIMARY} />
-                  <Text style={styles.infoText}>{student.phone}</Text>
-                </View>
-              ) : null}
-
-              {student.parent_name ? (
-                <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="account" size={16} color={PRIMARY} />
-                  <Text style={styles.infoText}>Veli: {student.parent_name}</Text>
-                </View>
-              ) : null}
-
-              {student.parent_phone ? (
-                <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="phone-outline" size={16} color={PRIMARY} />
-                  <Text style={styles.infoText}>{student.parent_phone}</Text>
-                </View>
-              ) : null}
-
-              {student.notes ? (
-                <>
+                {(student.phone || student.parent_name || student.parent_phone) ? (
                   <Divider style={styles.divider} />
-                  <Text style={styles.notesText}>{student.notes}</Text>
-                </>
-              ) : null}
+                ) : null}
+
+                {student.phone ? (
+                  <View style={styles.infoRow}>
+                    <MaterialCommunityIcons name="phone" size={16} color={colors.seal} />
+                    <Text style={styles.infoText}>{student.phone}</Text>
+                  </View>
+                ) : null}
+
+                {student.parent_name ? (
+                  <View style={styles.infoRow}>
+                    <MaterialCommunityIcons name="account" size={16} color={colors.seal} />
+                    <Text style={styles.infoText}>Veli: {student.parent_name}</Text>
+                  </View>
+                ) : null}
+
+                {student.parent_phone ? (
+                  <View style={styles.infoRow}>
+                    <MaterialCommunityIcons name="phone-outline" size={16} color={colors.seal} />
+                    <Text style={styles.infoText}>{student.parent_phone}</Text>
+                  </View>
+                ) : null}
+
+                {student.notes ? (
+                  <>
+                    <Divider style={styles.divider} />
+                    <Text style={styles.notesText}>{student.notes}</Text>
+                  </>
+                ) : null}
+              </View>
             </View>
 
             <TouchableOpacity
@@ -209,26 +204,26 @@ export default function StudentDetailScreen() {
             >
               <View style={styles.paymentSummaryHeader}>
                 <View style={styles.paymentSummaryTitleRow}>
-                  <MaterialCommunityIcons name="wallet-outline" size={18} color={PRIMARY} />
+                  <MaterialCommunityIcons name="wallet-outline" size={18} color={colors.slate} />
                   <Text style={styles.paymentSummaryTitle}>Ödemeler</Text>
                 </View>
-                <MaterialCommunityIcons name="chevron-right" size={20} color={TEXT_SECONDARY} />
+                <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textSecondary} />
               </View>
               <View style={styles.paymentSummaryRow}>
                 <View style={styles.paymentSummaryItem}>
                   <Text style={styles.paymentSummaryLabel}>Bekleyen</Text>
-                  <Text style={[styles.paymentSummaryValue, { color: WARNING }]}>
+                  <Text style={[styles.paymentSummaryValue, { color: colors.slate }]}>
                     {formatAmount(paymentSummary.pending)}
                   </Text>
                 </View>
                 <View style={styles.paymentSummaryItem}>
                   <Text style={styles.paymentSummaryLabel}>Gecikmiş</Text>
-                  <Text style={[styles.paymentSummaryValue, { color: ERROR_COLOR }]}>
+                  <Text style={[styles.paymentSummaryValue, { color: colors.rust }]}>
                     {formatAmount(paymentSummary.overdue)}
                   </Text>
                 </View>
                 <TouchableOpacity style={styles.paymentAddButton} onPress={handleAddPayment}>
-                  <MaterialCommunityIcons name="plus" size={16} color={PRIMARY} />
+                  <MaterialCommunityIcons name="plus" size={16} color={colors.sealDeep} />
                   <Text style={styles.paymentAddButtonText}>Ekle</Text>
                 </TouchableOpacity>
               </View>
@@ -270,10 +265,10 @@ export default function StudentDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   editIcon: {
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   listContent: {
     paddingBottom: 100,
@@ -282,29 +277,36 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   infoCard: {
-    margin: 16,
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#5B4FCF',
+    margin: spacing.lg,
+    borderRadius: radius.md,
+    backgroundColor: colors.paperRaised,
+    overflow: 'hidden',
+    shadowColor: colors.ink,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.07,
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
+  },
+  infoCardTabStrip: {
+    height: 4,
+    backgroundColor: colors.seal,
+  },
+  infoCardBody: {
+    padding: spacing.lg,
   },
   avatarRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md,
     marginBottom: 4,
   },
   avatarCircle: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: PRIMARY,
+    backgroundColor: colors.ink,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
@@ -321,67 +323,67 @@ const styles = StyleSheet.create({
   studentName: {
     fontSize: 18,
     fontWeight: '700',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   metaText: {
     fontSize: 13,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   statusPill: {
-    borderRadius: 20,
-    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 4,
     flexShrink: 0,
   },
   pillActive: {
-    backgroundColor: '#D1FAE5',
+    backgroundColor: colors.mossSoft,
   },
   pillInactive: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.paperShade,
   },
   pillText: {
     fontSize: 12,
     fontWeight: '700',
   },
   pillTextActive: {
-    color: SUCCESS,
+    color: colors.moss,
   },
   pillTextInactive: {
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
   },
   divider: {
-    marginVertical: 12,
-    backgroundColor: BORDER,
+    marginVertical: spacing.md,
+    backgroundColor: colors.border,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
   },
   infoText: {
     fontSize: 14,
-    color: TEXT_PRIMARY,
+    color: colors.ink,
     fontWeight: '500',
   },
   notesText: {
     fontSize: 13,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     fontStyle: 'italic',
     lineHeight: 20,
   },
   paymentSummaryCard: {
-    marginHorizontal: 16,
-    marginBottom: 8,
-    padding: 14,
-    borderRadius: 14,
-    backgroundColor: '#FFFFFF',
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+    padding: spacing.md + 2,
+    borderRadius: radius.md,
+    backgroundColor: colors.paperRaised,
     borderWidth: 1,
-    borderColor: BORDER,
-    shadowColor: '#5B4FCF',
+    borderColor: colors.border,
+    shadowColor: colors.ink,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.05,
     shadowRadius: 6,
     elevation: 2,
   },
@@ -389,7 +391,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   paymentSummaryTitleRow: {
     flexDirection: 'row',
@@ -399,12 +401,12 @@ const styles = StyleSheet.create({
   paymentSummaryTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   paymentSummaryRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.lg,
   },
   paymentSummaryItem: {
     gap: 2,
@@ -412,7 +414,7 @@ const styles = StyleSheet.create({
   paymentSummaryLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
@@ -425,46 +427,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     marginLeft: 'auto',
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 6,
-    borderRadius: 10,
-    backgroundColor: PRIMARY_LIGHT,
+    borderRadius: radius.sm,
+    backgroundColor: colors.sealSoft,
   },
   paymentAddButtonText: {
     fontSize: 12,
     fontWeight: '700',
-    color: PRIMARY,
+    color: colors.sealDeep,
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginHorizontal: 16,
-    marginTop: 8,
+    gap: spacing.sm,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.sm,
     marginBottom: 4,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: TEXT_PRIMARY,
+    ...typography.h3,
   },
   lessonCountBadge: {
-    backgroundColor: PRIMARY_LIGHT,
-    borderRadius: 12,
-    paddingHorizontal: 8,
+    backgroundColor: colors.sealSoft,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 2,
   },
   lessonCountText: {
     fontSize: 12,
     fontWeight: '700',
-    color: PRIMARY,
+    color: colors.sealDeep,
   },
   fab: {
     position: 'absolute',
-    right: 16,
-    bottom: 16,
-    backgroundColor: PRIMARY,
-    shadowColor: PRIMARY,
+    right: spacing.lg,
+    bottom: spacing.lg,
+    backgroundColor: colors.seal,
+    shadowColor: colors.seal,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 10,

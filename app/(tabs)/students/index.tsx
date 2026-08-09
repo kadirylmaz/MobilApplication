@@ -12,11 +12,7 @@ import { StudentFiltersBar } from '../../../src/components/student/StudentFilter
 import { EmptyState } from '../../../src/components/ui/EmptyState';
 import { LoadingOverlay } from '../../../src/components/ui/LoadingOverlay';
 import type { StudentRow } from '../../../src/types/database';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
+import { colors, radius, spacing, typography } from '../../../src/theme';
 
 export default function StudentsScreen() {
   const router = useRouter();
@@ -91,46 +87,41 @@ export default function StudentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     paddingTop: 56,
-    paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.paperRaised,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   headerTitle: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: TEXT_PRIMARY,
-    letterSpacing: -0.5,
+    ...typography.h1,
   },
   headerSubtitle: {
-    fontSize: 13,
-    color: TEXT_SECONDARY,
+    ...typography.bodySecondary,
     marginTop: 2,
-    fontWeight: '500',
   },
   countBadge: {
-    backgroundColor: PRIMARY_LIGHT,
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    backgroundColor: colors.sealSoft,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md + 2,
+    paddingVertical: spacing.sm - 2,
     minWidth: 40,
     alignItems: 'center',
   },
   countBadgeText: {
-    color: PRIMARY,
+    color: colors.sealDeep,
     fontWeight: '700',
     fontSize: 16,
   },
   listContent: {
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
     paddingBottom: 96,
   },
   emptyContainer: {
@@ -138,11 +129,11 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: 20,
-    bottom: 20,
-    backgroundColor: PRIMARY,
-    borderRadius: 18,
-    shadowColor: PRIMARY,
+    right: spacing.xl,
+    bottom: spacing.xl,
+    backgroundColor: colors.seal,
+    borderRadius: radius.lg,
+    shadowColor: colors.seal,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
     shadowRadius: 10,

@@ -5,12 +5,12 @@
 import type { User } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { supabase, getTeacherProfile } from '../lib/supabase';
-import type { TeacherRow } from '../types/database';
+import type { ProfileRow } from '../types/database';
 import type { AsyncStatus } from '../types/index';
 
 interface AuthState {
   user: User | null;
-  teacher: TeacherRow | null;
+  teacher: ProfileRow | null;
   status: AsyncStatus;
   error: string | null;
 }
@@ -120,7 +120,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       if (!current) throw new Error('Öğretmen profili bulunamadı');
 
       const { data, error } = await supabase
-        .from('teachers')
+        .from('profiles')
         .update({
           full_name: values.full_name,
           phone: values.phone || null,

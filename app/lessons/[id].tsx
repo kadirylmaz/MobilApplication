@@ -15,15 +15,7 @@ import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
 import { LoadingOverlay } from '../../src/components/ui/LoadingOverlay';
 import { HeaderBackButton } from '../../src/components/ui/HeaderBackButton';
 import type { LessonStatus } from '../../src/types/database';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const SUCCESS = '#10B981';
-const WARNING = '#F59E0B';
-const ERROR_COLOR = '#EF4444';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing, typography } from '../../src/theme';
 
 const STATUS_LABELS: Record<LessonStatus, string> = {
   scheduled: 'Planlandı',
@@ -33,10 +25,10 @@ const STATUS_LABELS: Record<LessonStatus, string> = {
 };
 
 const STATUS_COLORS: Record<LessonStatus, string> = {
-  scheduled: PRIMARY,
-  completed: SUCCESS,
-  cancelled: ERROR_COLOR,
-  compensated: WARNING,
+  scheduled: colors.slate,
+  completed: colors.moss,
+  cancelled: colors.rust,
+  compensated: colors.seal,
 };
 
 export default function LessonDetailScreen() {
@@ -109,7 +101,7 @@ export default function LessonDetailScreen() {
           {/* Student row */}
           <View style={styles.infoRow}>
             <View style={styles.infoIconBox}>
-              <MaterialCommunityIcons name="account" size={16} color={PRIMARY} />
+              <MaterialCommunityIcons name="account" size={16} color={colors.seal} />
             </View>
             <View style={styles.infoContent}>
               <Text style={styles.label}>Öğrenci</Text>
@@ -128,7 +120,7 @@ export default function LessonDetailScreen() {
           <View style={styles.dateTimeRow}>
             <View style={[styles.infoRow, styles.flex1]}>
               <View style={styles.infoIconBox}>
-                <MaterialCommunityIcons name="calendar" size={16} color={PRIMARY} />
+                <MaterialCommunityIcons name="calendar" size={16} color={colors.seal} />
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.label}>Tarih</Text>
@@ -137,7 +129,7 @@ export default function LessonDetailScreen() {
             </View>
             <View style={[styles.infoRow, styles.flex1]}>
               <View style={styles.infoIconBox}>
-                <MaterialCommunityIcons name="clock-outline" size={16} color={PRIMARY} />
+                <MaterialCommunityIcons name="clock-outline" size={16} color={colors.seal} />
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.label}>Saat</Text>
@@ -148,7 +140,7 @@ export default function LessonDetailScreen() {
 
           <View style={styles.infoRow}>
             <View style={styles.infoIconBox}>
-              <MaterialCommunityIcons name="timer-outline" size={16} color={PRIMARY} />
+              <MaterialCommunityIcons name="timer-outline" size={16} color={colors.seal} />
             </View>
             <View style={styles.infoContent}>
               <Text style={styles.label}>Süre</Text>
@@ -161,7 +153,7 @@ export default function LessonDetailScreen() {
               <Divider style={styles.divider} />
               <View style={styles.infoRow}>
                 <View style={styles.infoIconBox}>
-                  <MaterialCommunityIcons name="book-open-variant" size={16} color={PRIMARY} />
+                  <MaterialCommunityIcons name="book-open-variant" size={16} color={colors.seal} />
                 </View>
                 <View style={styles.infoContent}>
                   <Text style={styles.label}>Konu</Text>
@@ -176,7 +168,7 @@ export default function LessonDetailScreen() {
               <Divider style={styles.divider} />
               <View style={styles.notesBlock}>
                 <View style={styles.infoIconBox}>
-                  <MaterialCommunityIcons name="note-text-outline" size={16} color={PRIMARY} />
+                  <MaterialCommunityIcons name="note-text-outline" size={16} color={colors.seal} />
                 </View>
                 <View style={styles.infoContent}>
                   <Text style={styles.label}>Notlar</Text>
@@ -195,7 +187,7 @@ export default function LessonDetailScreen() {
             disabled={isLoading}
             style={styles.editButton}
             contentStyle={styles.buttonContent}
-            textColor={PRIMARY}
+            textColor={colors.seal}
             icon="pencil"
           >
             Düzenle
@@ -223,7 +215,7 @@ export default function LessonDetailScreen() {
               disabled={isLoading}
               style={styles.cancelledButton}
               contentStyle={styles.buttonContent}
-              textColor={ERROR_COLOR}
+              textColor={colors.rust}
               icon="close-circle"
             >
               İptal Et
@@ -250,7 +242,7 @@ export default function LessonDetailScreen() {
             disabled={isLoading}
             style={styles.deleteButton}
             contentStyle={styles.buttonContent}
-            textColor={ERROR_COLOR}
+            textColor={colors.rust}
             icon="delete"
           >
             Dersi Sil
@@ -266,19 +258,19 @@ export default function LessonDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   screenBg: {
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   statusBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginBottom: 12,
+    gap: spacing.sm,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    marginBottom: spacing.md,
   },
   statusDot: {
     width: 8,
@@ -290,37 +282,35 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#5B4FCF',
+    backgroundColor: colors.paperRaised,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    shadowColor: colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: BORDER,
+    borderColor: colors.border,
   },
   cardTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: TEXT_PRIMARY,
+    ...typography.h3,
     marginBottom: 4,
   },
   divider: {
-    marginVertical: 12,
-    backgroundColor: BORDER,
+    marginVertical: spacing.md,
+    backgroundColor: colors.border,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
+    gap: spacing.md,
     marginBottom: 4,
   },
   dateTimeRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
     marginBottom: 4,
   },
   flex1: {
@@ -329,8 +319,8 @@ const styles = StyleSheet.create({
   infoIconBox: {
     width: 32,
     height: 32,
-    borderRadius: 8,
-    backgroundColor: PRIMARY_LIGHT,
+    borderRadius: radius.sm,
+    backgroundColor: colors.sealSoft,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
@@ -342,7 +332,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 11,
     fontWeight: '700',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 2,
@@ -350,49 +340,49 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 15,
     fontWeight: '600',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   valueSub: {
     fontSize: 12,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     marginTop: 1,
   },
   notesBlock: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.md,
     alignItems: 'flex-start',
   },
   notesText: {
     fontSize: 14,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     lineHeight: 22,
   },
   actions: {
-    gap: 10,
-    paddingBottom: 32,
+    gap: spacing.sm + 2,
+    paddingBottom: spacing.xxl,
   },
   buttonContent: {
     paddingVertical: 4,
   },
   editButton: {
-    borderColor: PRIMARY,
-    borderRadius: 12,
+    borderColor: colors.seal,
+    borderRadius: radius.sm,
   },
   completedButton: {
-    backgroundColor: SUCCESS,
-    borderRadius: 12,
+    backgroundColor: colors.moss,
+    borderRadius: radius.sm,
   },
   cancelledButton: {
-    borderColor: ERROR_COLOR,
-    borderRadius: 12,
+    borderColor: colors.rust,
+    borderRadius: radius.sm,
   },
   compensateButton: {
-    backgroundColor: WARNING,
-    borderRadius: 12,
+    backgroundColor: colors.seal,
+    borderRadius: radius.sm,
   },
   deleteButton: {
-    borderColor: ERROR_COLOR,
-    borderRadius: 12,
+    borderColor: colors.rust,
+    borderRadius: radius.sm,
     marginTop: 4,
   },
 });

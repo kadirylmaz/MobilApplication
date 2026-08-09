@@ -12,13 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../../../src/hooks/useAuth';
 import { ScreenWrapper } from '../../../src/components/ui/ScreenWrapper';
 import { AppButton } from '../../../src/components/ui/AppButton';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
-const ERROR = '#EF4444';
+import { colors, radius } from '../../../src/theme';
 
 function getInitials(name: string): string {
   return name
@@ -47,7 +41,7 @@ export default function ProfileScreen() {
       <ScreenWrapper style={styles.screenBg}>
         <View style={styles.emptyContainer}>
           <View style={styles.emptyIconCircle}>
-            <MaterialCommunityIcons name="account-alert" size={40} color={TEXT_SECONDARY} />
+            <MaterialCommunityIcons name="account-alert" size={40} color={colors.textSecondary} />
           </View>
           <Text variant="bodyLarge" style={styles.emptyText}>
             Profil bilgisi yüklenemedi.
@@ -75,7 +69,7 @@ export default function ProfileScreen() {
           <Text style={styles.fullName}>{teacher.full_name}</Text>
           {teacher.email ? (
             <View style={styles.emailRow}>
-              <MaterialCommunityIcons name="email-outline" size={14} color={TEXT_SECONDARY} />
+              <MaterialCommunityIcons name="email-outline" size={14} color={colors.textSecondary} />
               <Text style={styles.email}>{teacher.email}</Text>
             </View>
           ) : null}
@@ -86,7 +80,7 @@ export default function ProfileScreen() {
           {teacher.phone ? (
             <View style={styles.infoRow}>
               <View style={styles.infoIconBox}>
-                <MaterialCommunityIcons name="phone" size={16} color={PRIMARY} />
+                <MaterialCommunityIcons name="phone" size={16} color={colors.seal} />
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>Telefon</Text>
@@ -102,7 +96,7 @@ export default function ProfileScreen() {
           {formattedDate ? (
             <View style={styles.infoRow}>
               <View style={styles.infoIconBox}>
-                <MaterialCommunityIcons name="calendar" size={16} color={PRIMARY} />
+                <MaterialCommunityIcons name="calendar" size={16} color={colors.seal} />
               </View>
               <View style={styles.infoContent}>
                 <Text style={styles.infoLabel}>Üyelik tarihi</Text>
@@ -136,7 +130,7 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   screenBg: {
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   container: {
     flex: 1,
@@ -145,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 36,
     paddingHorizontal: 24,
-    backgroundColor: PRIMARY_LIGHT,
+    backgroundColor: colors.sealSoft,
     marginHorizontal: -16,
     marginTop: -16,
     borderBottomLeftRadius: 32,
@@ -156,17 +150,17 @@ const styles = StyleSheet.create({
   avatarRing: {
     padding: 4,
     borderRadius: 48,
-    backgroundColor: 'rgba(91,79,207,0.15)',
+    backgroundColor: colors.sealSoft,
     marginBottom: 4,
   },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: PRIMARY,
+    backgroundColor: colors.seal,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: PRIMARY,
+    shadowColor: colors.seal,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -175,12 +169,12 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 30,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: colors.paperRaised,
   },
   fullName: {
     fontSize: 22,
     fontWeight: '800',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
     textAlign: 'center',
   },
   emailRow: {
@@ -190,22 +184,22 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 14,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     textAlign: 'center',
     fontWeight: '500',
   },
   infoCard: {
     marginHorizontal: 16,
     padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#5B4FCF',
+    borderRadius: radius.md,
+    backgroundColor: colors.paperRaised,
+    shadowColor: colors.seal,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   infoRow: {
     flexDirection: 'row',
@@ -217,7 +211,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: PRIMARY_LIGHT,
+    backgroundColor: colors.sealSoft,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
@@ -227,20 +221,20 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 11,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   infoValue: {
     fontSize: 15,
-    color: TEXT_PRIMARY,
+    color: colors.ink,
     fontWeight: '600',
     marginTop: 1,
   },
   divider: {
     marginVertical: 12,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
   },
   actions: {
     marginTop: 28,
@@ -249,12 +243,12 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   editButton: {
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
     borderRadius: 12,
     marginBottom: 12,
   },
   signOutButton: {
-    backgroundColor: ERROR,
+    backgroundColor: colors.rust,
   },
   emptyContainer: {
     flex: 1,
@@ -266,11 +260,11 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.paperShade,
     justifyContent: 'center',
     alignItems: 'center',
   },
   emptyText: {
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
   },
 });

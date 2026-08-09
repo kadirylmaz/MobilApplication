@@ -162,7 +162,7 @@ export async function resetPassword(email: string) {
 // -----------------------------------------------------------------------------
 
 /**
- * Giriş yapmış kullanıcıya ait teacher kaydını döndürür.
+ * Giriş yapmış kullanıcıya ait öğretmen profilini döndürür.
  * Uygulama boyunca context üzerinden paylaşmak için kullanın.
  */
 export async function getTeacherProfile() {
@@ -170,9 +170,10 @@ export async function getTeacherProfile() {
   if (!user) return null;
 
   const { data, error } = await supabase
-    .from('teachers')
+    .from('profiles')
     .select('*')
     .eq('user_id', user.id)
+    .eq('role', 'teacher')
     .single();
 
   if (error) {

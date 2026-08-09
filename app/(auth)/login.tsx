@@ -15,11 +15,7 @@ import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
 import { AppTextInput } from '../../src/components/ui/AppTextInput';
 import { AppButton } from '../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../src/components/ui/ErrorMessage';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
+import { colors, radius, spacing, typography } from '../../src/theme';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -41,7 +37,7 @@ export default function LoginScreen() {
     clearError();
     try {
       await signIn(values.email, values.password);
-      router.replace('/(tabs)/students');
+      router.replace('/(tabs)/home');
     } catch {
       // error is set in the store
     }
@@ -53,55 +49,59 @@ export default function LoginScreen() {
         {/* Hero header area */}
         <View style={styles.heroArea}>
           <View style={styles.iconCircle}>
-            <MaterialCommunityIcons name="notebook" size={64} color={PRIMARY} />
+            <MaterialCommunityIcons name="notebook" size={52} color={colors.seal} />
           </View>
+          <Text style={styles.eyebrow}>ÖĞRETMEN PANELİ</Text>
           <Text style={styles.appTitle}>Ders Defteri</Text>
           <Text style={styles.subtitle}>Hesabınıza giriş yapın</Text>
         </View>
 
         {/* Form card */}
         <View style={styles.card}>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AppTextInput
-                label="E-posta"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={errors.email?.message}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-              />
-            )}
-          />
+          <View style={styles.cardTabStrip} />
+          <View style={styles.cardBody}>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AppTextInput
+                  label="E-posta"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.email?.message}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                />
+              )}
+            />
 
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AppTextInput
-                label="Şifre"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={errors.password?.message}
-                secureTextEntry
-                autoComplete="password"
-              />
-            )}
-          />
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AppTextInput
+                  label="Şifre"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.password?.message}
+                  secureTextEntry
+                  autoComplete="password"
+                />
+              )}
+            />
 
-          <ErrorMessage message={error} />
+            <ErrorMessage message={error} />
 
-          <AppButton
-            label="Giriş Yap"
-            onPress={handleSubmit(onSubmit)}
-            loading={isLoading}
-            style={styles.button}
-          />
+            <AppButton
+              label="Giriş Yap"
+              onPress={handleSubmit(onSubmit)}
+              loading={isLoading}
+              style={styles.button}
+            />
+          </View>
         </View>
 
         <View style={styles.footer}>
@@ -121,78 +121,90 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingVertical: 24,
+    paddingVertical: spacing.xl,
   },
   heroArea: {
     alignItems: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 24,
-    backgroundColor: '#EDE9FE',
+    paddingVertical: spacing.xxxl,
+    paddingHorizontal: spacing.xl,
+    backgroundColor: colors.ink,
     marginHorizontal: -16,
     marginTop: -16,
     marginBottom: 0,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
-    paddingBottom: 48,
+    borderBottomLeftRadius: radius.xl,
+    borderBottomRightRadius: radius.xl,
+    paddingBottom: spacing.xxxl + 8,
   },
   iconCircle: {
-    width: 104,
-    height: 104,
-    borderRadius: 52,
-    backgroundColor: '#FFFFFF',
+    width: 96,
+    height: 96,
+    borderRadius: radius.lg,
+    backgroundColor: colors.paper,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
-    shadowColor: '#5B4FCF',
+    marginBottom: spacing.lg,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 6,
+  },
+  eyebrow: {
+    ...typography.eyebrow,
+    color: colors.sealSoft,
+    marginBottom: spacing.sm,
   },
   appTitle: {
     fontSize: 32,
     fontWeight: '800',
-    color: PRIMARY,
+    color: '#FFFFFF',
     marginBottom: 6,
-    letterSpacing: -0.5,
+    letterSpacing: -0.8,
   },
   subtitle: {
     fontSize: 15,
-    color: TEXT_SECONDARY,
+    color: 'rgba(255,255,255,0.72)',
     fontWeight: '500',
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 24,
+    backgroundColor: colors.paperRaised,
+    borderRadius: radius.xl,
     marginHorizontal: 0,
-    marginTop: -24,
-    shadowColor: '#5B4FCF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    marginTop: -28,
+    overflow: 'hidden',
+    shadowColor: colors.ink,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  cardTabStrip: {
+    height: 5,
+    backgroundColor: colors.seal,
+  },
+  cardBody: {
+    padding: spacing.xl,
   },
   button: {
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 28,
+    marginTop: spacing.xxl,
     flexWrap: 'wrap',
   },
   footerText: {
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
   },
   link: {
-    color: PRIMARY,
+    color: colors.seal,
     fontWeight: '700',
   },
 });

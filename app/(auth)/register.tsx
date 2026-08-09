@@ -15,11 +15,7 @@ import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
 import { AppTextInput } from '../../src/components/ui/AppTextInput';
 import { AppButton } from '../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../src/components/ui/ErrorMessage';
-
-const PRIMARY = '#5B4FCF';
-const PRIMARY_LIGHT = '#EDE9FE';
-const SUCCESS = '#10B981';
-const TEXT_SECONDARY = '#6B7280';
+import { colors, radius, spacing, typography } from '../../src/theme';
 
 export default function RegisterScreen() {
   const { signUp, error, isLoading, clearError } = useAuth();
@@ -54,14 +50,17 @@ export default function RegisterScreen() {
       <ScreenWrapper scrollable style={styles.safeArea}>
         <View style={styles.container}>
           <View style={styles.successCard}>
-            <View style={styles.successIconCircle}>
-              <MaterialCommunityIcons name="email-check" size={48} color={SUCCESS} />
+            <View style={styles.successTabStrip} />
+            <View style={styles.successBody}>
+              <View style={styles.successIconCircle}>
+                <MaterialCommunityIcons name="email-check" size={44} color={colors.moss} />
+              </View>
+              <Text style={styles.successTitle}>Kayıt Başarılı!</Text>
+              <Text style={styles.successText}>E-postanızı kontrol edin</Text>
+              <Text style={styles.successSubtext}>
+                Hesabınızı etkinleştirmek için e-postanıza gönderilen bağlantıya tıklayın.
+              </Text>
             </View>
-            <Text style={styles.successTitle}>Kayıt Başarılı!</Text>
-            <Text style={styles.successText}>E-postanızı kontrol edin</Text>
-            <Text style={styles.successSubtext}>
-              Hesabınızı etkinleştirmek için e-postanıza gönderilen bağlantıya tıklayın.
-            </Text>
           </View>
 
           <View style={styles.footer}>
@@ -85,7 +84,7 @@ export default function RegisterScreen() {
         {/* Hero header area */}
         <View style={styles.heroArea}>
           <View style={styles.iconCircle}>
-            <MaterialCommunityIcons name="notebook" size={56} color={PRIMARY} />
+            <MaterialCommunityIcons name="notebook-plus" size={48} color={colors.seal} />
           </View>
           <Text style={styles.appTitle}>Hesap Oluştur</Text>
           <Text style={styles.subtitle}>Ders Defteri'ne kayıt olun</Text>
@@ -93,78 +92,81 @@ export default function RegisterScreen() {
 
         {/* Form card */}
         <View style={styles.card}>
-          <Controller
-            control={control}
-            name="full_name"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AppTextInput
-                label="Ad Soyad"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={errors.full_name?.message}
-                autoComplete="name"
-              />
-            )}
-          />
+          <View style={styles.cardTabStrip} />
+          <View style={styles.cardBody}>
+            <Controller
+              control={control}
+              name="full_name"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AppTextInput
+                  label="Ad Soyad"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.full_name?.message}
+                  autoComplete="name"
+                />
+              )}
+            />
 
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AppTextInput
-                label="E-posta"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={errors.email?.message}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-              />
-            )}
-          />
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AppTextInput
+                  label="E-posta"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.email?.message}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                />
+              )}
+            />
 
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AppTextInput
-                label="Şifre"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={errors.password?.message}
-                secureTextEntry
-                autoComplete="new-password"
-              />
-            )}
-          />
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AppTextInput
+                  label="Şifre"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.password?.message}
+                  secureTextEntry
+                  autoComplete="new-password"
+                />
+              )}
+            />
 
-          <Controller
-            control={control}
-            name="confirmPassword"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AppTextInput
-                label="Şifre Tekrar"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                error={errors.confirmPassword?.message}
-                secureTextEntry
-                autoComplete="new-password"
-              />
-            )}
-          />
+            <Controller
+              control={control}
+              name="confirmPassword"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AppTextInput
+                  label="Şifre Tekrar"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  error={errors.confirmPassword?.message}
+                  secureTextEntry
+                  autoComplete="new-password"
+                />
+              )}
+            />
 
-          <ErrorMessage message={error} />
+            <ErrorMessage message={error} />
 
-          <AppButton
-            label="Kayıt Ol"
-            onPress={handleSubmit(onSubmit)}
-            loading={isLoading}
-            style={styles.button}
-          />
+            <AppButton
+              label="Kayıt Ol"
+              onPress={handleSubmit(onSubmit)}
+              loading={isLoading}
+              style={styles.button}
+            />
+          </View>
         </View>
 
         <View style={styles.footer}>
@@ -184,115 +186,129 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingVertical: 24,
+    paddingVertical: spacing.xl,
   },
   heroArea: {
     alignItems: 'center',
-    paddingVertical: 32,
-    paddingHorizontal: 24,
-    backgroundColor: '#EDE9FE',
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.xl,
+    backgroundColor: colors.ink,
     marginHorizontal: -16,
     marginTop: -16,
     marginBottom: 0,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
-    paddingBottom: 48,
+    borderBottomLeftRadius: radius.xl,
+    borderBottomRightRadius: radius.xl,
+    paddingBottom: spacing.xxxl,
   },
   iconCircle: {
-    width: 92,
-    height: 92,
-    borderRadius: 46,
-    backgroundColor: '#FFFFFF',
+    width: 84,
+    height: 84,
+    borderRadius: radius.lg,
+    backgroundColor: colors.paper,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 14,
-    shadowColor: '#5B4FCF',
+    marginBottom: spacing.md,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 6,
   },
   appTitle: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '800',
-    color: '#5B4FCF',
+    color: '#FFFFFF',
     marginBottom: 6,
-    letterSpacing: -0.5,
+    letterSpacing: -0.6,
   },
   subtitle: {
     fontSize: 15,
-    color: TEXT_SECONDARY,
+    color: 'rgba(255,255,255,0.72)',
     fontWeight: '500',
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 24,
+    backgroundColor: colors.paperRaised,
+    borderRadius: radius.xl,
     marginHorizontal: 0,
-    marginTop: -24,
-    shadowColor: '#5B4FCF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    marginTop: -28,
+    overflow: 'hidden',
+    shadowColor: colors.ink,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  cardTabStrip: {
+    height: 5,
+    backgroundColor: colors.seal,
+  },
+  cardBody: {
+    padding: spacing.xl,
   },
   button: {
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 28,
+    marginTop: spacing.xxl,
     flexWrap: 'wrap',
   },
   footerText: {
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
   },
   link: {
-    color: '#5B4FCF',
+    color: colors.seal,
     fontWeight: '700',
   },
   successCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 32,
+    backgroundColor: colors.paperRaised,
+    borderRadius: radius.xl,
+    overflow: 'hidden',
+    marginBottom: spacing.xxl,
+    shadowColor: colors.ink,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  successTabStrip: {
+    height: 5,
+    backgroundColor: colors.moss,
+  },
+  successBody: {
+    padding: spacing.xxl,
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 32,
-    shadowColor: '#5B4FCF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    gap: spacing.md,
   },
   successIconCircle: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    backgroundColor: '#D1FAE5',
+    width: 80,
+    height: 80,
+    borderRadius: radius.lg,
+    backgroundColor: colors.mossSoft,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.xs,
   },
   successTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: SUCCESS,
+    color: colors.moss,
   },
   successText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1E1B4B',
+    color: colors.ink,
   },
   successSubtext: {
     textAlign: 'center',
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     lineHeight: 22,
   },
 });

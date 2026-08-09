@@ -6,6 +6,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { HelperText, TextInput } from 'react-native-paper';
 import type { TextInputProps } from 'react-native-paper';
+import { colors, radius } from '../../theme';
 
 interface AppTextInputProps extends Omit<TextInputProps, 'theme'> {
   label: string;
@@ -53,12 +54,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.paperRaised,
     fontSize: 15,
   },
   outline: {
-    borderRadius: 12,
-    borderColor: '#E5E7EB',
+    borderRadius: radius.md,
+    borderColor: colors.border,
   },
   helper: {
     marginTop: -4,

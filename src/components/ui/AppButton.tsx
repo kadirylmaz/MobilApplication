@@ -6,6 +6,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import type { ButtonProps } from 'react-native-paper';
+import { colors, radius } from '../../theme';
 
 interface AppButtonProps extends Omit<ButtonProps, 'children'> {
   label: string;
@@ -40,11 +41,11 @@ export function AppButton({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 12,
+    borderRadius: radius.md,
     marginVertical: 6,
-    shadowColor: '#5B4FCF',
+    shadowColor: colors.seal,
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.18,
+    shadowOpacity: 0.22,
     shadowRadius: 8,
     elevation: 4,
   },

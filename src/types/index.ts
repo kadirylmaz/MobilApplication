@@ -14,40 +14,59 @@ export type {
   LessonStatus,
   PaymentStatus,
   FileType,
+  ProfileRole,
 
   // Satır tipleri
-  TeacherRow,
+  ProfileRow,
   StudentRow,
   LessonRow,
   PaymentRow,
   MaterialRow,
+  GroupRow,
+  GroupMemberRow,
+  PostRow,
+  PostLikeRow,
+  PostCommentRow,
+  TeacherStudentRow,
+  ParentStudentRow,
 
   // Insert tipleri
-  TeacherInsert,
+  ProfileInsert,
   StudentInsert,
   LessonInsert,
   PaymentInsert,
   MaterialInsert,
+  GroupInsert,
+  GroupMemberInsert,
+  PostInsert,
+  PostLikeInsert,
+  PostCommentInsert,
 
   // Update tipleri
-  TeacherUpdate,
+  ProfileUpdate,
   StudentUpdate,
   LessonUpdate,
   PaymentUpdate,
   MaterialUpdate,
+  GroupUpdate,
+  PostUpdate,
 
   // Kısayollar
-  Teacher,
+  Profile,
   Student,
   Lesson,
   Payment,
   Material,
+  Group,
+  Post,
 
   // JOIN tipleri
   LessonWithStudent,
   PaymentWithStudent,
   MaterialWithStudent,
   StudentWithStats,
+  GroupWithMemberCount,
+  PostWithMeta,
 
   // Ana Database tipi
   Database,
@@ -101,6 +120,21 @@ export interface TeacherProfileFormValues {
   full_name: string;
   phone: string;
   email: string;
+}
+
+export interface GroupFormValues {
+  name: string;
+  description: string;
+}
+
+export interface PostFormValues {
+  content: string;
+  video_url: string;
+  group_id: string | null; // null = herkese açık
+}
+
+export interface CommentFormValues {
+  content: string;
 }
 
 // -----------------------------------------------------------------------------

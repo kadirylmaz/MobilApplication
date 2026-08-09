@@ -6,14 +6,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import type { LessonRow, LessonStatus } from '../../types/database';
-
-const PRIMARY = '#5B4FCF';
-const SUCCESS = '#10B981';
-const WARNING = '#F59E0B';
-const ERROR_COLOR = '#EF4444';
-const TEXT_PRIMARY = '#1E1B4B';
-const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
+import { colors, radius, spacing } from '../../theme';
 
 interface LessonCardProps {
   lesson: LessonRow;
@@ -28,10 +21,10 @@ const STATUS_LABELS: Record<LessonStatus, string> = {
 };
 
 const STATUS_COLORS: Record<LessonStatus, string> = {
-  scheduled: PRIMARY,
-  completed: SUCCESS,
-  cancelled: ERROR_COLOR,
-  compensated: WARNING,
+  scheduled: colors.slate,
+  completed: colors.moss,
+  cancelled: colors.rust,
+  compensated: colors.seal,
 };
 
 function formatScheduledAt(isoString: string): string {
@@ -94,14 +87,14 @@ export function LessonCard({ lesson, onPress }: LessonCardProps) {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    marginHorizontal: 16,
+    marginHorizontal: spacing.lg,
     marginVertical: 5,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    backgroundColor: colors.paperRaised,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: BORDER,
+    borderColor: colors.border,
     overflow: 'hidden',
-    shadowColor: '#5B4FCF',
+    shadowColor: colors.ink,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 6,
@@ -109,19 +102,19 @@ const styles = StyleSheet.create({
   },
   accentBar: {
     width: 4,
-    borderTopLeftRadius: 14,
-    borderBottomLeftRadius: 14,
+    borderTopLeftRadius: radius.md,
+    borderBottomLeftRadius: radius.md,
   },
   content: {
     flex: 1,
     paddingVertical: 13,
-    paddingHorizontal: 14,
+    paddingHorizontal: spacing.md + 2,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   info: {
     flex: 1,
@@ -129,27 +122,27 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 11,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   topic: {
     fontSize: 14,
     fontWeight: '700',
-    color: TEXT_PRIMARY,
+    color: colors.ink,
   },
   noTopic: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: colors.textMuted,
     fontStyle: 'italic',
   },
   duration: {
     fontSize: 12,
-    color: TEXT_SECONDARY,
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   statusBadge: {
-    borderRadius: 20,
-    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 5,
     alignSelf: 'flex-start',
     flexShrink: 0,

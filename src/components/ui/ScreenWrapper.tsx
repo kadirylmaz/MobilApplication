@@ -11,6 +11,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../theme';
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -52,7 +53,7 @@ export function ScreenWrapper({
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F8F7FF',
+    backgroundColor: colors.paper,
   },
   keyboard: {
     flex: 1,
