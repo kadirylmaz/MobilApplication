@@ -90,6 +90,10 @@ export default function TabsLayout() {
       <Tabs.Screen name="students/[id]" options={{ href: null }} />
       <Tabs.Screen name="students/new" options={{ href: null }} />
       <Tabs.Screen name="students/[id]/edit" options={{ href: null }} />
+      <Tabs.Screen name="profile/edit" options={{ href: null }} />
+      <Tabs.Screen name="payments/[id]" options={{ href: null }} />
+      <Tabs.Screen name="payments/new" options={{ href: null }} />
+      <Tabs.Screen name="payments/[id]/edit" options={{ href: null }} />
 
     </Tabs>
   );

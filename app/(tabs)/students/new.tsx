@@ -14,6 +14,7 @@ import { ScreenWrapper } from '../../../src/components/ui/ScreenWrapper';
 import { AppTextInput } from '../../../src/components/ui/AppTextInput';
 import { AppButton } from '../../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../../src/components/ui/ErrorMessage';
+import { HeaderBackButton } from '../../../src/components/ui/HeaderBackButton';
 
 const PRIMARY = '#5B4FCF';
 const TEXT_PRIMARY = '#1E1B4B';
@@ -65,14 +66,7 @@ export default function NewStudentScreen() {
       <Stack.Screen
         options={{
           title: 'Yeni Öğrenci',
-          headerLeft: () => (
-            <Text
-              style={styles.cancelButton}
-              onPress={() => router.back()}
-            >
-              İptal
-            </Text>
-          ),
+          headerLeft: () => <HeaderBackButton />,
         }}
       />
       <ScreenWrapper scrollable style={styles.screenBg}>
@@ -264,11 +258,5 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 12,
-  },
-  cancelButton: {
-    color: '#5B4FCF',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
   },
 });

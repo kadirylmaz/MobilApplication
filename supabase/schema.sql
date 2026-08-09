@@ -88,26 +88,28 @@ COMMENT ON COLUMN public.students.is_active    IS 'FALSE ise öğrenci arşivlen
 -- Planlanmış ve geçmiş dersler.
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.lessons (
-  id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  teacher_id         UUID NOT NULL REFERENCES public.teachers(id) ON DELETE CASCADE,
-  student_id         UUID NOT NULL REFERENCES public.students(id) ON DELETE CASCADE,
-  scheduled_at       TIMESTAMPTZ NOT NULL,
-  duration_minutes   INTEGER NOT NULL DEFAULT 60
-                       CHECK (duration_minutes > 0 AND duration_minutes <= 480),
-  topic              TEXT CHECK (char_length(topic) <= 200),
-  notes              TEXT CHECK (char_length(notes) <= 2000),
-  status             lesson_status NOT NULL DEFAULT 'scheduled',
-  created_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  id                     UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  teacher_id             UUID NOT NULL REFERENCES public.teachers(id) ON DELETE CASCADE,
+  student_id             UUID NOT NULL REFERENCES public.students(id) ON DELETE CASCADE,
+  scheduled_at           TIMESTAMPTZ NOT NULL,
+  duration_minutes       INTEGER NOT NULL DEFAULT 60
+                           CHECK (duration_minutes > 0 AND duration_minutes <= 480),
+  topic                  TEXT CHECK (char_length(topic) <= 200),
+  notes                  TEXT CHECK (char_length(notes) <= 2000),
+  status                 lesson_status NOT NULL DEFAULT 'scheduled',
+  compensates_lesson_id  UUID REFERENCES public.lessons(id) ON DELETE SET NULL,
+  created_at             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE  public.lessons                    IS 'Planlanmış ve tamamlanmış dersler';
-COMMENT ON COLUMN public.lessons.teacher_id         IS 'Dersi veren öğretmen';
-COMMENT ON COLUMN public.lessons.student_id         IS 'Dersi alan öğrenci';
-COMMENT ON COLUMN public.lessons.scheduled_at       IS 'Dersin başlangıç zamanı (timezone-aware)';
-COMMENT ON COLUMN public.lessons.duration_minutes   IS 'Ders süresi dakika cinsinden (1-480)';
-COMMENT ON COLUMN public.lessons.topic              IS 'Ders konusu (Örn: Türev, Limit)';
-COMMENT ON COLUMN public.lessons.status             IS 'scheduled | completed | cancelled | compensated';
+COMMENT ON TABLE  public.lessons                        IS 'Planlanmış ve tamamlanmış dersler';
+COMMENT ON COLUMN public.lessons.teacher_id             IS 'Dersi veren öğretmen';
+COMMENT ON COLUMN public.lessons.student_id             IS 'Dersi alan öğrenci';
+COMMENT ON COLUMN public.lessons.scheduled_at           IS 'Dersin başlangıç zamanı (timezone-aware)';
+COMMENT ON COLUMN public.lessons.duration_minutes       IS 'Ders süresi dakika cinsinden (1-480)';
+COMMENT ON COLUMN public.lessons.topic                  IS 'Ders konusu (Örn: Türev, Limit)';
+COMMENT ON COLUMN public.lessons.status                 IS 'scheduled | completed | cancelled | compensated';
+COMMENT ON COLUMN public.lessons.compensates_lesson_id  IS 'compensated dersler için: telafi ettiği iptal edilmiş dersin id''si';
 
 -- -----------------------------------------------------------------------------
 -- TABLO: payments
@@ -238,6 +240,8 @@ CREATE INDEX IF NOT EXISTS idx_lessons_scheduled_at
   ON public.lessons(teacher_id, scheduled_at DESC);
 CREATE INDEX IF NOT EXISTS idx_lessons_status
   ON public.lessons(teacher_id, status);
+CREATE INDEX IF NOT EXISTS idx_lessons_compensates
+  ON public.lessons(compensates_lesson_id);
 
 -- payments
 CREATE INDEX IF NOT EXISTS idx_payments_teacher_id

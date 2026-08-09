@@ -1,23 +1,23 @@
 // =============================================================================
-// Ders Defteri — New Lesson Screen
+// Ders Defteri — New Payment Screen
 // =============================================================================
 
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { lessonSchema, type LessonSchemaValues } from '../../src/validation/lessonSchemas';
-import { useLessons } from '../../src/hooks/useLessons';
-import { useStudents } from '../../src/hooks/useStudents';
-import { maskDateInput, maskTimeInput } from '../../src/utils/dateInputMask';
-import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
-import { AppTextInput } from '../../src/components/ui/AppTextInput';
-import { AppButton } from '../../src/components/ui/AppButton';
-import { ErrorMessage } from '../../src/components/ui/ErrorMessage';
-import { HeaderBackButton } from '../../src/components/ui/HeaderBackButton';
+import { paymentSchema, type PaymentSchemaValues } from '../../../src/validation/paymentSchemas';
+import { usePayments } from '../../../src/hooks/usePayments';
+import { useStudents } from '../../../src/hooks/useStudents';
+import { maskDateInput } from '../../../src/utils/dateInputMask';
+import { ScreenWrapper } from '../../../src/components/ui/ScreenWrapper';
+import { AppTextInput } from '../../../src/components/ui/AppTextInput';
+import { AppButton } from '../../../src/components/ui/AppButton';
+import { ErrorMessage } from '../../../src/components/ui/ErrorMessage';
+import { HeaderBackButton } from '../../../src/components/ui/HeaderBackButton';
 
 const PRIMARY = '#5B4FCF';
 const PRIMARY_LIGHT = '#EDE9FE';
@@ -26,10 +26,10 @@ const TEXT_SECONDARY = '#6B7280';
 const BORDER = '#E5E7EB';
 const ERROR_COLOR = '#EF4444';
 
-export default function NewLessonScreen() {
+export default function NewPaymentScreen() {
   const { student_id } = useLocalSearchParams<{ student_id?: string }>();
   const router = useRouter();
-  const { addLesson, isLoading, error } = useLessons();
+  const { addPayment, isLoading, error } = usePayments();
   const { students } = useStudents();
 
   const prefilledStudent = student_id
@@ -40,29 +40,29 @@ export default function NewLessonScreen() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<LessonSchemaValues>({
-    resolver: zodResolver(lessonSchema),
+  } = useForm<PaymentSchemaValues>({
+    resolver: zodResolver(paymentSchema),
     defaultValues: {
       student_id: student_id ?? '',
-      scheduled_date: '',
-      scheduled_time: '',
-      duration_minutes: 60,
-      topic: '',
+      amount: '',
+      payment_date: '',
+      period_start: '',
+      period_end: '',
+      status: 'pending',
       notes: '',
-      status: 'scheduled',
     },
   });
 
-  async function onSubmit(values: LessonSchemaValues) {
+  async function onSubmit(values: PaymentSchemaValues) {
     try {
-      await addLesson({
+      await addPayment({
         student_id: values.student_id,
-        scheduled_date: values.scheduled_date,
-        scheduled_time: values.scheduled_time,
-        duration_minutes: values.duration_minutes,
-        topic: values.topic ?? '',
-        notes: values.notes ?? '',
+        amount: values.amount,
+        payment_date: values.payment_date ?? '',
+        period_start: values.period_start,
+        period_end: values.period_end,
         status: values.status,
+        notes: values.notes ?? '',
       });
       router.back();
     } catch {
@@ -72,7 +72,7 @@ export default function NewLessonScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Yeni Ders', headerLeft: () => <HeaderBackButton /> }} />
+      <Stack.Screen options={{ title: 'Yeni Ödeme', headerLeft: () => <HeaderBackButton /> }} />
       <ScreenWrapper scrollable style={styles.screenBg}>
         <View style={styles.form}>
           {student_id && prefilledStudent ? (
@@ -83,26 +83,17 @@ export default function NewLessonScreen() {
               <View style={styles.studentDisplayInfo}>
                 <Text style={styles.studentLabel}>Öğrenci</Text>
                 <Text style={styles.studentName}>{prefilledStudent.full_name}</Text>
-                {prefilledStudent.grade || prefilledStudent.subject ? (
-                  <Text style={styles.studentMeta}>
-                    {[prefilledStudent.grade, prefilledStudent.subject]
-                      .filter(Boolean)
-                      .join(' · ')}
-                  </Text>
-                ) : null}
               </View>
             </View>
           ) : (
             <Controller
               control={control}
               name="student_id"
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({ field: { onChange, value } }) => (
                 <View>
                   <Text style={styles.pickerLabel}>Öğrenci *</Text>
                   {students.length === 0 ? (
-                    <Text style={styles.noStudentsText}>
-                      Önce öğrenci eklemelisiniz.
-                    </Text>
+                    <Text style={styles.noStudentsText}>Önce öğrenci eklemelisiniz.</Text>
                   ) : (
                     <ScrollView
                       style={styles.studentPickerScroll}
@@ -126,13 +117,6 @@ export default function NewLessonScreen() {
                           >
                             {student.full_name}
                           </Text>
-                          {student.grade || student.subject ? (
-                            <Text style={styles.studentOptionMeta}>
-                              {[student.grade, student.subject]
-                                .filter(Boolean)
-                                .join(' · ')}
-                            </Text>
-                          ) : null}
                         </View>
                       ))}
                     </ScrollView>
@@ -145,18 +129,67 @@ export default function NewLessonScreen() {
             />
           )}
 
-          <Text style={styles.sectionLabel}>Ders Zamanı</Text>
+          <Text style={styles.sectionLabel}>Ödeme Bilgileri</Text>
 
           <Controller
             control={control}
-            name="scheduled_date"
+            name="amount"
             render={({ field: { onChange, onBlur, value } }) => (
               <AppTextInput
-                label="Tarih *"
+                label="Tutar (₺) *"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.amount?.message}
+                placeholder="0"
+                keyboardType="decimal-pad"
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="status"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.statusRow}>
+                {(
+                  [
+                    { key: 'pending', label: 'Beklemede' },
+                    { key: 'paid', label: 'Ödendi' },
+                    { key: 'overdue', label: 'Gecikmiş' },
+                  ] as const
+                ).map((item) => (
+                  <View
+                    key={item.key}
+                    style={[styles.statusChip, value === item.key && styles.statusChipActive]}
+                    onTouchEnd={() => onChange(item.key)}
+                  >
+                    <Text
+                      style={[
+                        styles.statusChipText,
+                        value === item.key && styles.statusChipTextActive,
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          />
+
+          <Text style={styles.sectionLabel}>Dönem</Text>
+
+          <Controller
+            control={control}
+            name="period_start"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AppTextInput
+                label="Dönem Başlangıcı *"
                 value={value}
                 onChangeText={(text) => onChange(maskDateInput(text))}
                 onBlur={onBlur}
-                error={errors.scheduled_date?.message}
+                error={errors.period_start?.message}
                 placeholder="YYYY-AA-GG"
                 keyboardType="numeric"
                 maxLength={10}
@@ -166,51 +199,39 @@ export default function NewLessonScreen() {
 
           <Controller
             control={control}
-            name="scheduled_time"
+            name="period_end"
             render={({ field: { onChange, onBlur, value } }) => (
               <AppTextInput
-                label="Saat *"
+                label="Dönem Sonu *"
                 value={value}
-                onChangeText={(text) => onChange(maskTimeInput(text))}
+                onChangeText={(text) => onChange(maskDateInput(text))}
                 onBlur={onBlur}
-                error={errors.scheduled_time?.message}
-                placeholder="SS:DD"
+                error={errors.period_end?.message}
+                placeholder="YYYY-AA-GG"
                 keyboardType="numeric"
-                maxLength={5}
+                maxLength={10}
               />
             )}
           />
 
           <Controller
             control={control}
-            name="duration_minutes"
+            name="payment_date"
             render={({ field: { onChange, onBlur, value } }) => (
               <AppTextInput
-                label="Süre (dakika)"
-                value={String(value)}
-                onChangeText={(text) => onChange(parseInt(text, 10) || 60)}
-                onBlur={onBlur}
-                error={errors.duration_minutes?.message}
-                keyboardType="numeric"
-              />
-            )}
-          />
-
-          <Text style={styles.sectionLabel}>Ders Detayları</Text>
-
-          <Controller
-            control={control}
-            name="topic"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AppTextInput
-                label="Konu"
+                label="Ödeme Tarihi"
                 value={value ?? ''}
-                onChangeText={onChange}
+                onChangeText={(text) => onChange(maskDateInput(text))}
                 onBlur={onBlur}
-                error={errors.topic?.message}
+                error={errors.payment_date?.message}
+                placeholder="YYYY-AA-GG (opsiyonel)"
+                keyboardType="numeric"
+                maxLength={10}
               />
             )}
           />
+
+          <Text style={styles.sectionLabel}>Notlar</Text>
 
           <Controller
             control={control}
@@ -231,7 +252,7 @@ export default function NewLessonScreen() {
           <ErrorMessage message={error} />
 
           <AppButton
-            label="Ders Ekle"
+            label="Ödeme Ekle"
             onPress={handleSubmit(onSubmit)}
             loading={isLoading}
             style={styles.submitButton}
@@ -295,11 +316,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: TEXT_PRIMARY,
   },
-  studentMeta: {
-    fontSize: 12,
-    color: TEXT_SECONDARY,
-    marginTop: 2,
-  },
   pickerLabel: {
     fontSize: 11,
     fontWeight: '700',
@@ -334,11 +350,6 @@ const styles = StyleSheet.create({
     color: PRIMARY,
     fontWeight: '700',
   },
-  studentOptionMeta: {
-    fontSize: 12,
-    color: TEXT_SECONDARY,
-    marginTop: 2,
-  },
   noStudentsText: {
     color: ERROR_COLOR,
     fontSize: 14,
@@ -348,6 +359,33 @@ const styles = StyleSheet.create({
     color: ERROR_COLOR,
     fontSize: 12,
     marginTop: 4,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  statusChip: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: BORDER,
+  },
+  statusChipActive: {
+    backgroundColor: PRIMARY_LIGHT,
+    borderColor: PRIMARY,
+  },
+  statusChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: TEXT_SECONDARY,
+  },
+  statusChipTextActive: {
+    color: PRIMARY,
+    fontWeight: '700',
   },
   submitButton: {
     marginTop: 12,

@@ -20,6 +20,7 @@ interface AuthActions {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signOut: () => Promise<void>;
+  updateTeacher: (values: { full_name: string; phone?: string }) => Promise<void>;
   clearError: () => void;
 }
 
@@ -107,6 +108,32 @@ export const useAuthStore = create<AuthStore>((set) => ({
       set({ user: null, teacher: null, status: 'idle' });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Çıkış başarısız';
+      set({ status: 'error', error: message });
+      throw err;
+    }
+  },
+
+  updateTeacher: async (values: { full_name: string; phone?: string }) => {
+    set({ status: 'loading', error: null });
+    try {
+      const current = useAuthStore.getState().teacher;
+      if (!current) throw new Error('Öğretmen profili bulunamadı');
+
+      const { data, error } = await supabase
+        .from('teachers')
+        .update({
+          full_name: values.full_name,
+          phone: values.phone || null,
+        })
+        .eq('id', current.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      set({ teacher: data, status: 'success' });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Profil güncellenemedi';
       set({ status: 'error', error: message });
       throw err;
     }

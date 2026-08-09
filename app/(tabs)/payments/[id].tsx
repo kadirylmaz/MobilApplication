@@ -1,20 +1,20 @@
 // =============================================================================
-// Ders Defteri — Lesson Detail Screen
+// Ders Defteri — Payment Detail Screen
 // =============================================================================
 
 import React from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Button, Card, Chip, Divider, Surface, Text } from 'react-native-paper';
+import { Button, Divider, Text } from 'react-native-paper';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { format, parseISO } from 'date-fns';
 import { tr } from 'date-fns/locale/tr';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useLessons } from '../../src/hooks/useLessons';
-import { useStudentStore } from '../../src/store/studentStore';
-import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
-import { LoadingOverlay } from '../../src/components/ui/LoadingOverlay';
-import { HeaderBackButton } from '../../src/components/ui/HeaderBackButton';
-import type { LessonStatus } from '../../src/types/database';
+import { usePayments } from '../../../src/hooks/usePayments';
+import { useStudentStore } from '../../../src/store/studentStore';
+import { ScreenWrapper } from '../../../src/components/ui/ScreenWrapper';
+import { LoadingOverlay } from '../../../src/components/ui/LoadingOverlay';
+import { HeaderBackButton } from '../../../src/components/ui/HeaderBackButton';
+import type { PaymentRow, PaymentStatus } from '../../../src/types/database';
 
 const PRIMARY = '#5B4FCF';
 const PRIMARY_LIGHT = '#EDE9FE';
@@ -25,64 +25,75 @@ const TEXT_PRIMARY = '#1E1B4B';
 const TEXT_SECONDARY = '#6B7280';
 const BORDER = '#E5E7EB';
 
-const STATUS_LABELS: Record<LessonStatus, string> = {
-  scheduled: 'Planlandı',
-  completed: 'Tamamlandı',
-  cancelled: 'İptal',
-  compensated: 'Telafi',
+const STATUS_LABELS: Record<PaymentStatus, string> = {
+  pending: 'Beklemede',
+  paid: 'Ödendi',
+  overdue: 'Gecikmiş',
 };
 
-const STATUS_COLORS: Record<LessonStatus, string> = {
-  scheduled: PRIMARY,
-  completed: SUCCESS,
-  cancelled: ERROR_COLOR,
-  compensated: WARNING,
+const STATUS_COLORS: Record<PaymentStatus, string> = {
+  pending: WARNING,
+  paid: SUCCESS,
+  overdue: ERROR_COLOR,
 };
 
-export default function LessonDetailScreen() {
+function isOverdue(payment: PaymentRow): boolean {
+  const today = new Date().toISOString().slice(0, 10);
+  return payment.status === 'pending' && payment.period_end < today;
+}
+
+function formatAmount(amount: number): string {
+  return `${amount.toLocaleString('tr-TR', { maximumFractionDigits: 2 })} ₺`;
+}
+
+export default function PaymentDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { lessons, updateLessonStatus, deleteLesson, isLoading } = useLessons();
+  const { payments, updatePaymentStatus, deletePayment, isLoading } = usePayments();
   const students = useStudentStore((s) => s.students);
 
-  const lesson = lessons.find((l) => l.id === id);
+  const payment = payments.find((p) => p.id === id);
 
-  if (!lesson) {
+  if (!payment) {
     return (
       <View style={styles.container}>
-        <Stack.Screen options={{ title: 'Ders Detayı', headerLeft: () => <HeaderBackButton /> }} />
+        <Stack.Screen options={{ title: 'Ödeme Detayı', headerLeft: () => <HeaderBackButton /> }} />
         <LoadingOverlay visible />
       </View>
     );
   }
 
-  const student = students.find((s) => s.id === lesson.student_id);
-  const statusColor = STATUS_COLORS[lesson.status];
-  const statusLabel = STATUS_LABELS[lesson.status];
+  const student = students.find((s) => s.id === payment.student_id);
+  const overdue = isOverdue(payment);
+  const effectiveStatus: PaymentStatus = overdue ? 'overdue' : payment.status;
+  const statusColor = STATUS_COLORS[effectiveStatus];
+  const statusLabel = STATUS_LABELS[effectiveStatus];
 
-  const scheduledDate = parseISO(lesson.scheduled_at);
-  const formattedDate = format(scheduledDate, 'dd MMMM yyyy', { locale: tr });
-  const formattedTime = format(scheduledDate, 'HH:mm');
+  const periodStartStr = format(parseISO(payment.period_start), 'd MMMM yyyy', { locale: tr });
+  const periodEndStr = format(parseISO(payment.period_end), 'd MMMM yyyy', { locale: tr });
+  const paymentDateStr = payment.payment_date
+    ? format(parseISO(payment.payment_date), 'd MMMM yyyy', { locale: tr })
+    : null;
 
-  async function handleMarkCompleted() {
-    await updateLessonStatus(lesson.id, 'completed');
+  async function handleMarkPaid() {
+    await updatePaymentStatus(payment.id, 'paid');
   }
 
-  async function handleMarkCancelled() {
-    await updateLessonStatus(lesson.id, 'cancelled');
+  async function handleMarkPending() {
+    await updatePaymentStatus(payment.id, 'pending');
   }
 
   function handleDelete() {
     Alert.alert(
-      'Dersi Sil',
-      'Bu dersi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.',
+      'Ödemeyi Sil',
+      'Bu ödeme kaydını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.',
       [
         { text: 'Vazgeç', style: 'cancel' },
         {
           text: 'Sil',
           style: 'destructive',
           onPress: async () => {
-            await deleteLesson(lesson.id);
+            await deletePayment(payment.id);
             router.back();
           },
         },
@@ -92,21 +103,18 @@ export default function LessonDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: 'Ders Detayı' }} />
+      <Stack.Screen options={{ title: 'Ödeme Detayı' }} />
       <ScreenWrapper scrollable style={styles.screenBg}>
-        {/* Status banner */}
         <View style={[styles.statusBanner, { backgroundColor: statusColor + '15' }]}>
           <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
           <Text style={[styles.statusBannerText, { color: statusColor }]}>{statusLabel}</Text>
         </View>
 
-        {/* Main info card */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Ders Bilgileri</Text>
+          <Text style={styles.cardTitle}>Ödeme Bilgileri</Text>
 
           <Divider style={styles.divider} />
 
-          {/* Student row */}
           <View style={styles.infoRow}>
             <View style={styles.infoIconBox}>
               <MaterialCommunityIcons name="account" size={16} color={PRIMARY} />
@@ -114,64 +122,60 @@ export default function LessonDetailScreen() {
             <View style={styles.infoContent}>
               <Text style={styles.label}>Öğrenci</Text>
               <Text style={styles.value}>{student?.full_name ?? 'Bilinmiyor'}</Text>
-              {student?.grade || student?.subject ? (
-                <Text style={styles.valueSub}>
-                  {[student.grade, student.subject].filter(Boolean).join(' · ')}
-                </Text>
-              ) : null}
             </View>
           </View>
 
           <Divider style={styles.divider} />
 
-          {/* Date/Time row */}
+          <View style={styles.infoRow}>
+            <View style={styles.infoIconBox}>
+              <MaterialCommunityIcons name="cash" size={16} color={PRIMARY} />
+            </View>
+            <View style={styles.infoContent}>
+              <Text style={styles.label}>Tutar</Text>
+              <Text style={styles.amountValue}>{formatAmount(payment.amount)}</Text>
+            </View>
+          </View>
+
+          <Divider style={styles.divider} />
+
           <View style={styles.dateTimeRow}>
             <View style={[styles.infoRow, styles.flex1]}>
               <View style={styles.infoIconBox}>
-                <MaterialCommunityIcons name="calendar" size={16} color={PRIMARY} />
+                <MaterialCommunityIcons name="calendar-start" size={16} color={PRIMARY} />
               </View>
               <View style={styles.infoContent}>
-                <Text style={styles.label}>Tarih</Text>
-                <Text style={styles.value}>{formattedDate}</Text>
+                <Text style={styles.label}>Dönem Başı</Text>
+                <Text style={styles.value}>{periodStartStr}</Text>
               </View>
             </View>
             <View style={[styles.infoRow, styles.flex1]}>
               <View style={styles.infoIconBox}>
-                <MaterialCommunityIcons name="clock-outline" size={16} color={PRIMARY} />
+                <MaterialCommunityIcons name="calendar-end" size={16} color={PRIMARY} />
               </View>
               <View style={styles.infoContent}>
-                <Text style={styles.label}>Saat</Text>
-                <Text style={styles.value}>{formattedTime}</Text>
+                <Text style={styles.label}>Dönem Sonu</Text>
+                <Text style={styles.value}>{periodEndStr}</Text>
               </View>
             </View>
           </View>
 
-          <View style={styles.infoRow}>
-            <View style={styles.infoIconBox}>
-              <MaterialCommunityIcons name="timer-outline" size={16} color={PRIMARY} />
-            </View>
-            <View style={styles.infoContent}>
-              <Text style={styles.label}>Süre</Text>
-              <Text style={styles.value}>{lesson.duration_minutes} dakika</Text>
-            </View>
-          </View>
-
-          {lesson.topic ? (
+          {paymentDateStr ? (
             <>
               <Divider style={styles.divider} />
               <View style={styles.infoRow}>
                 <View style={styles.infoIconBox}>
-                  <MaterialCommunityIcons name="book-open-variant" size={16} color={PRIMARY} />
+                  <MaterialCommunityIcons name="calendar-check" size={16} color={PRIMARY} />
                 </View>
                 <View style={styles.infoContent}>
-                  <Text style={styles.label}>Konu</Text>
-                  <Text style={styles.value}>{lesson.topic}</Text>
+                  <Text style={styles.label}>Ödeme Tarihi</Text>
+                  <Text style={styles.value}>{paymentDateStr}</Text>
                 </View>
               </View>
             </>
           ) : null}
 
-          {lesson.notes ? (
+          {payment.notes ? (
             <>
               <Divider style={styles.divider} />
               <View style={styles.notesBlock}>
@@ -180,18 +184,17 @@ export default function LessonDetailScreen() {
                 </View>
                 <View style={styles.infoContent}>
                   <Text style={styles.label}>Notlar</Text>
-                  <Text style={styles.notesText}>{lesson.notes}</Text>
+                  <Text style={styles.notesText}>{payment.notes}</Text>
                 </View>
               </View>
             </>
           ) : null}
         </View>
 
-        {/* Action buttons */}
         <View style={styles.actions}>
           <Button
             mode="outlined"
-            onPress={() => router.push(`/lessons/${lesson.id}/edit`)}
+            onPress={() => router.push(`/(tabs)/payments/${payment.id}/edit`)}
             disabled={isLoading}
             style={styles.editButton}
             contentStyle={styles.buttonContent}
@@ -201,47 +204,32 @@ export default function LessonDetailScreen() {
             Düzenle
           </Button>
 
-          {lesson.status !== 'completed' && lesson.status !== 'cancelled' ? (
+          {payment.status !== 'paid' ? (
             <Button
               mode="contained"
-              onPress={handleMarkCompleted}
+              onPress={handleMarkPaid}
               loading={isLoading}
               disabled={isLoading}
-              style={styles.completedButton}
+              style={styles.paidButton}
               contentStyle={styles.buttonContent}
               icon="check-circle"
             >
-              Tamamlandı
+              Ödendi Olarak İşaretle
             </Button>
-          ) : null}
-
-          {lesson.status !== 'cancelled' ? (
+          ) : (
             <Button
               mode="outlined"
-              onPress={handleMarkCancelled}
+              onPress={handleMarkPending}
               loading={isLoading}
               disabled={isLoading}
-              style={styles.cancelledButton}
+              style={styles.pendingButton}
               contentStyle={styles.buttonContent}
-              textColor={ERROR_COLOR}
-              icon="close-circle"
+              textColor={WARNING}
+              icon="clock-outline"
             >
-              İptal Et
+              Beklemede Olarak İşaretle
             </Button>
-          ) : null}
-
-          {lesson.status === 'cancelled' ? (
-            <Button
-              mode="contained"
-              onPress={() => router.push(`/lessons/compensate?original_id=${lesson.id}`)}
-              disabled={isLoading}
-              style={styles.compensateButton}
-              contentStyle={styles.buttonContent}
-              icon="calendar-refresh"
-            >
-              Telafi Planla
-            </Button>
-          ) : null}
+          )}
 
           <Button
             mode="outlined"
@@ -253,7 +241,7 @@ export default function LessonDetailScreen() {
             textColor={ERROR_COLOR}
             icon="delete"
           >
-            Dersi Sil
+            Ödemeyi Sil
           </Button>
         </View>
 
@@ -352,10 +340,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: TEXT_PRIMARY,
   },
-  valueSub: {
-    fontSize: 12,
-    color: TEXT_SECONDARY,
-    marginTop: 1,
+  amountValue: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: TEXT_PRIMARY,
   },
   notesBlock: {
     flexDirection: 'row',
@@ -378,16 +366,12 @@ const styles = StyleSheet.create({
     borderColor: PRIMARY,
     borderRadius: 12,
   },
-  completedButton: {
+  paidButton: {
     backgroundColor: SUCCESS,
     borderRadius: 12,
   },
-  cancelledButton: {
-    borderColor: ERROR_COLOR,
-    borderRadius: 12,
-  },
-  compensateButton: {
-    backgroundColor: WARNING,
+  pendingButton: {
+    borderColor: WARNING,
     borderRadius: 12,
   },
   deleteButton: {

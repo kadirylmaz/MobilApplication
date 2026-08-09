@@ -13,6 +13,7 @@ export function useAuth() {
   const signIn = useAuthStore((s) => s.signIn);
   const signUp = useAuthStore((s) => s.signUp);
   const signOut = useAuthStore((s) => s.signOut);
+  const updateTeacher = useAuthStore((s) => s.updateTeacher);
   const clearError = useAuthStore((s) => s.clearError);
 
   return {
@@ -24,6 +25,7 @@ export function useAuth() {
     signIn,
     signUp,
     signOut,
+    updateTeacher,
     clearError,
     isAuthenticated: user !== null,
     isLoading: status === 'loading',

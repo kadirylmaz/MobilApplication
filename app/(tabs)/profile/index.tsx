@@ -116,12 +116,10 @@ export default function ProfileScreen() {
         <View style={styles.actions}>
           <AppButton
             label="Profili Düzenle"
-            onPress={() => {}}
+            onPress={() => router.push('/(tabs)/profile/edit')}
             mode="outlined"
-            disabled
             style={styles.editButton}
           />
-          <Text style={styles.comingSoon}>Faz 2'de eklenecek</Text>
 
           <AppButton
             label="Çıkış Yap"
@@ -253,12 +251,7 @@ const styles = StyleSheet.create({
   editButton: {
     borderColor: '#E5E7EB',
     borderRadius: 12,
-  },
-  comingSoon: {
-    textAlign: 'center',
-    color: TEXT_SECONDARY,
-    fontSize: 12,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   signOutButton: {
     backgroundColor: ERROR,

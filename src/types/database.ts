@@ -56,6 +56,7 @@ export interface LessonRow {
   topic: string | null;
   notes: string | null;
   status: LessonStatus;
+  compensates_lesson_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -121,6 +122,7 @@ export interface LessonInsert {
   topic?: string | null;
   notes?: string | null;
   status?: LessonStatus;
+  compensates_lesson_id?: string | null;
   created_at?: string;
   updated_at?: string;
 }

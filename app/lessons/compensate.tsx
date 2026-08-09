@@ -1,40 +1,44 @@
 // =============================================================================
-// Ders Defteri — New Lesson Screen
+// Ders Defteri — Compensate Lesson Screen
 // =============================================================================
 
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { format, parseISO } from 'date-fns';
+import { tr } from 'date-fns/locale/tr';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { lessonSchema, type LessonSchemaValues } from '../../src/validation/lessonSchemas';
 import { useLessons } from '../../src/hooks/useLessons';
-import { useStudents } from '../../src/hooks/useStudents';
+import { useStudentStore } from '../../src/store/studentStore';
 import { maskDateInput, maskTimeInput } from '../../src/utils/dateInputMask';
 import { ScreenWrapper } from '../../src/components/ui/ScreenWrapper';
 import { AppTextInput } from '../../src/components/ui/AppTextInput';
 import { AppButton } from '../../src/components/ui/AppButton';
 import { ErrorMessage } from '../../src/components/ui/ErrorMessage';
+import { LoadingOverlay } from '../../src/components/ui/LoadingOverlay';
 import { HeaderBackButton } from '../../src/components/ui/HeaderBackButton';
 
 const PRIMARY = '#5B4FCF';
 const PRIMARY_LIGHT = '#EDE9FE';
+const WARNING = '#F59E0B';
+const WARNING_LIGHT = '#FEF3C7';
 const TEXT_PRIMARY = '#1E1B4B';
 const TEXT_SECONDARY = '#6B7280';
-const BORDER = '#E5E7EB';
-const ERROR_COLOR = '#EF4444';
 
-export default function NewLessonScreen() {
-  const { student_id } = useLocalSearchParams<{ student_id?: string }>();
+export default function CompensateLessonScreen() {
+  const { original_id } = useLocalSearchParams<{ original_id: string }>();
   const router = useRouter();
-  const { addLesson, isLoading, error } = useLessons();
-  const { students } = useStudents();
+  const { lessons, compensateLesson, isLoading, error } = useLessons();
+  const students = useStudentStore((s) => s.students);
 
-  const prefilledStudent = student_id
-    ? students.find((s) => s.id === student_id)
-    : null;
+  const originalLesson = lessons.find((l) => l.id === original_id);
+  const student = originalLesson
+    ? students.find((s) => s.id === originalLesson.student_id)
+    : undefined;
 
   const {
     control,
@@ -43,26 +47,40 @@ export default function NewLessonScreen() {
   } = useForm<LessonSchemaValues>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
-      student_id: student_id ?? '',
+      student_id: originalLesson?.student_id ?? '',
       scheduled_date: '',
       scheduled_time: '',
-      duration_minutes: 60,
-      topic: '',
+      duration_minutes: originalLesson?.duration_minutes ?? 60,
+      topic: originalLesson?.topic ?? '',
       notes: '',
-      status: 'scheduled',
+      status: 'compensated',
     },
   });
 
+  if (!originalLesson) {
+    return (
+      <View style={styles.container}>
+        <Stack.Screen options={{ title: 'Telafi Planla', headerLeft: () => <HeaderBackButton /> }} />
+        <LoadingOverlay visible />
+      </View>
+    );
+  }
+
+  const originalDate = parseISO(originalLesson.scheduled_at);
+  const formattedOriginalDate = format(originalDate, 'd MMMM yyyy', { locale: tr });
+  const formattedOriginalTime = format(originalDate, 'HH:mm');
+
   async function onSubmit(values: LessonSchemaValues) {
+    if (!original_id) return;
     try {
-      await addLesson({
+      await compensateLesson(original_id, {
         student_id: values.student_id,
         scheduled_date: values.scheduled_date,
         scheduled_time: values.scheduled_time,
         duration_minutes: values.duration_minutes,
         topic: values.topic ?? '',
         notes: values.notes ?? '',
-        status: values.status,
+        status: 'compensated',
       });
       router.back();
     } catch {
@@ -72,80 +90,40 @@ export default function NewLessonScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Yeni Ders', headerLeft: () => <HeaderBackButton /> }} />
+      <Stack.Screen options={{ title: 'Telafi Planla', headerLeft: () => <HeaderBackButton /> }} />
       <ScreenWrapper scrollable style={styles.screenBg}>
         <View style={styles.form}>
-          {student_id && prefilledStudent ? (
-            <View style={styles.studentDisplay}>
-              <View style={styles.studentDisplayIcon}>
-                <MaterialCommunityIcons name="account" size={20} color={PRIMARY} />
-              </View>
-              <View style={styles.studentDisplayInfo}>
-                <Text style={styles.studentLabel}>Öğrenci</Text>
-                <Text style={styles.studentName}>{prefilledStudent.full_name}</Text>
-                {prefilledStudent.grade || prefilledStudent.subject ? (
-                  <Text style={styles.studentMeta}>
-                    {[prefilledStudent.grade, prefilledStudent.subject]
-                      .filter(Boolean)
-                      .join(' · ')}
-                  </Text>
-                ) : null}
-              </View>
+          <View style={styles.originalCard}>
+            <View style={styles.originalIcon}>
+              <MaterialCommunityIcons name="calendar-remove" size={20} color={WARNING} />
             </View>
-          ) : (
-            <Controller
-              control={control}
-              name="student_id"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <View>
-                  <Text style={styles.pickerLabel}>Öğrenci *</Text>
-                  {students.length === 0 ? (
-                    <Text style={styles.noStudentsText}>
-                      Önce öğrenci eklemelisiniz.
-                    </Text>
-                  ) : (
-                    <ScrollView
-                      style={styles.studentPickerScroll}
-                      nestedScrollEnabled
-                      showsVerticalScrollIndicator={false}
-                    >
-                      {students.map((student) => (
-                        <View
-                          key={student.id}
-                          style={[
-                            styles.studentOption,
-                            value === student.id && styles.studentOptionSelected,
-                          ]}
-                          onTouchEnd={() => onChange(student.id)}
-                        >
-                          <Text
-                            style={[
-                              styles.studentOptionText,
-                              value === student.id && styles.studentOptionTextSelected,
-                            ]}
-                          >
-                            {student.full_name}
-                          </Text>
-                          {student.grade || student.subject ? (
-                            <Text style={styles.studentOptionMeta}>
-                              {[student.grade, student.subject]
-                                .filter(Boolean)
-                                .join(' · ')}
-                            </Text>
-                          ) : null}
-                        </View>
-                      ))}
-                    </ScrollView>
-                  )}
-                  {errors.student_id ? (
-                    <Text style={styles.fieldError}>{errors.student_id.message}</Text>
-                  ) : null}
-                </View>
-              )}
-            />
-          )}
+            <View style={styles.originalInfo}>
+              <Text style={styles.originalLabel}>İptal Edilen Ders</Text>
+              <Text style={styles.originalValue}>
+                {formattedOriginalDate} · {formattedOriginalTime}
+              </Text>
+              {originalLesson.topic ? (
+                <Text style={styles.originalMeta}>{originalLesson.topic}</Text>
+              ) : null}
+            </View>
+          </View>
 
-          <Text style={styles.sectionLabel}>Ders Zamanı</Text>
+          <View style={styles.studentDisplay}>
+            <View style={styles.studentDisplayIcon}>
+              <MaterialCommunityIcons name="account" size={20} color={PRIMARY} />
+            </View>
+            <View style={styles.studentDisplayInfo}>
+              <Text style={styles.studentLabel}>Öğrenci</Text>
+              <Text style={styles.studentName}>{student?.full_name ?? 'Bilinmiyor'}</Text>
+              {student?.grade || student?.subject ? (
+                <Text style={styles.studentMeta}>
+                  {[student?.grade, student?.subject].filter(Boolean).join(' · ')}
+                </Text>
+              ) : null}
+            </View>
+          </View>
+
+          <Text style={styles.sectionLabel}>Yeni Ders Zamanı</Text>
 
           <Controller
             control={control}
@@ -231,7 +209,7 @@ export default function NewLessonScreen() {
           <ErrorMessage message={error} />
 
           <AppButton
-            label="Ders Ekle"
+            label="Telafi Dersini Planla"
             onPress={handleSubmit(onSubmit)}
             loading={isLoading}
             style={styles.submitButton}
@@ -243,6 +221,10 @@ export default function NewLessonScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8F7FF',
+  },
   screenBg: {
     backgroundColor: '#F8F7FF',
   },
@@ -258,6 +240,47 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 4,
     marginLeft: 2,
+  },
+  originalCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: WARNING_LIGHT,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(245,158,11,0.25)',
+  },
+  originalIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+  originalInfo: {
+    flex: 1,
+  },
+  originalLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: WARNING,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  originalValue: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: TEXT_PRIMARY,
+  },
+  originalMeta: {
+    fontSize: 12,
+    color: TEXT_SECONDARY,
+    marginTop: 1,
   },
   studentDisplay: {
     flexDirection: 'row',
@@ -299,55 +322,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: TEXT_SECONDARY,
     marginTop: 2,
-  },
-  pickerLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: PRIMARY,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 8,
-    marginLeft: 2,
-  },
-  studentPickerScroll: {
-    maxHeight: 200,
-  },
-  studentOption: {
-    padding: 14,
-    borderRadius: 10,
-    marginBottom: 6,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: BORDER,
-  },
-  studentOptionSelected: {
-    backgroundColor: PRIMARY_LIGHT,
-    borderWidth: 1.5,
-    borderColor: PRIMARY,
-  },
-  studentOptionText: {
-    fontSize: 14,
-    color: TEXT_PRIMARY,
-    fontWeight: '500',
-  },
-  studentOptionTextSelected: {
-    color: PRIMARY,
-    fontWeight: '700',
-  },
-  studentOptionMeta: {
-    fontSize: 12,
-    color: TEXT_SECONDARY,
-    marginTop: 2,
-  },
-  noStudentsText: {
-    color: ERROR_COLOR,
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  fieldError: {
-    color: ERROR_COLOR,
-    fontSize: 12,
-    marginTop: 4,
   },
   submitButton: {
     marginTop: 12,
